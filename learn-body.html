@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧒 学习身体部位 Learn Body Parts</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #e8f5e9 0%, #e0f7fa 50%, #fff3e0 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    user-select: none;
+  }
+
+  header {
+    text-align: center;
+    padding: 24px 16px 12px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 6vw, 44px);
+    color: #2e7d32;
+    text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(0,0,0,0.08);
+    letter-spacing: 2px;
+    animation: bounce-title 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce-title {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+
+  .subtitle {
+    font-size: clamp(14px, 3.5vw, 20px);
+    color: #388e3c;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .mode-switch {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 16px 0 8px;
+  }
+
+  .mode-btn {
+    padding: 12px 28px;
+    font-size: clamp(16px, 4vw, 20px);
+    font-weight: 800;
+    border: 4px solid #fff;
+    border-radius: 50px;
+    background: #fff;
+    color: #388e3c;
+    cursor: pointer;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.08);
+    transition: all 0.15s;
+  }
+
+  .mode-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.08);
+  }
+
+  .mode-btn.active {
+    background: linear-gradient(135deg, #2e7d32, #00897b);
+    color: #fff;
+  }
+
+  .voice-settings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px 18px;
+    flex-wrap: wrap;
+    padding: 8px 16px 16px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .voice-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.7);
+    padding: 6px 8px;
+    border-radius: 50px;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.06);
+  }
+
+  .voice-group-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #388e3c;
+    padding-left: 6px;
+  }
+
+  .voice-toggle {
+    padding: 7px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .voice-toggle.active {
+    background: #fff;
+    color: #2e7d32;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .voice-toggle:active {
+    transform: scale(0.94);
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .body-card {
+    background: #fff;
+    border-radius: 28px;
+    padding: 18px 12px 16px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.08), 0 12px 24px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 4px solid #fff;
+  }
+
+  .body-card:hover {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+
+  .body-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.08), 0 6px 12px rgba(0,0,0,0.06);
+  }
+
+  .body-emoji {
+    font-size: 56px;
+    line-height: 1;
+    margin: 0 auto 10px;
+    animation: emoji-bounce 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+  }
+
+  .body-emoji svg,
+  .pop-emoji svg,
+  .opt-emoji svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+  }
+
+  @keyframes emoji-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(-3deg); }
+    75% { transform: translateY(-5px) rotate(3deg); }
+  }
+
+  .en-name {
+    font-size: clamp(19px, 4.5vw, 24px);
+    font-weight: 800;
+    color: #333;
+    letter-spacing: 1px;
+  }
+
+  .cn-name {
+    font-size: clamp(14px, 3.5vw, 17px);
+    color: #888;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .speaker-icon {
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .pop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+  }
+
+  .pop-overlay.show {
+    display: flex;
+    animation: fade-in 0.2s;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .pop-card {
+    background: #fff;
+    border-radius: 40px;
+    padding: 40px 50px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 90vw;
+    position: relative;
+  }
+
+  .pop-speak-btn {
+    margin-top: 20px;
+    padding: 14px 36px;
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 900;
+    border: 4px solid #fff;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #ec407a, #d81b60);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #880e4f, 0 10px 20px rgba(0,0,0,0.15);
+    transition: all 0.12s;
+    letter-spacing: 1px;
+  }
+  .pop-speak-btn:hover { transform: translateY(-2px); }
+  .pop-speak-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #880e4f, 0 4px 8px rgba(0,0,0,0.15);
+  }
+  .pop-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    background: linear-gradient(135deg, #ef5350, #c62828);
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #8b0000, 0 6px 12px rgba(0,0,0,0.18);
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .pop-close-btn:hover { transform: translateY(-2px) rotate(90deg); }
+  .pop-close-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #8b0000, 0 3px 6px rgba(0,0,0,0.18);
+  }
+
+  @keyframes pop-in {
+    from { transform: scale(0.3); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .pop-emoji {
+    font-size: 120px;
+    line-height: 1;
+    margin: 0 auto 16px;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.2));
+    animation: emoji-bounce 2s ease-in-out infinite;
+  }
+
+  .pop-en {
+    font-size: clamp(36px, 10vw, 56px);
+    font-weight: 900;
+    color: #333;
+    letter-spacing: 2px;
+  }
+
+  .pop-cn {
+    font-size: clamp(22px, 6vw, 32px);
+    color: #888;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  .pop-fact {
+    font-size: clamp(18px, 5vw, 24px);
+    color: #2e7d32;
+    margin-top: 14px;
+    font-weight: 800;
+    background: #e8f5e9;
+    display: inline-block;
+    padding: 8px 22px;
+    border-radius: 50px;
+    border: 3px dashed #81c784;
+  }
+
+  .pop-hint {
+    font-size: 14px;
+    color: #bbb;
+    margin-top: 18px;
+  }
+
+  .game-area {
+    display: none;
+    padding: 30px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .game-area.show {
+    display: block;
+  }
+
+  .question-box {
+    background: #fff;
+    border-radius: 30px;
+    padding: 28px 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.08), 0 12px 24px rgba(0,0,0,0.06);
+  }
+
+  .question-label {
+    font-size: clamp(16px, 4vw, 20px);
+    color: #388e3c;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-size: clamp(26px, 7vw, 40px);
+    font-weight: 900;
+    color: #2e7d32;
+  }
+
+  .question-cn {
+    font-size: clamp(20px, 5vw, 28px);
+    color: #555;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  .listen-btn {
+    margin-top: 14px;
+    padding: 10px 22px;
+    font-size: 16px;
+    font-weight: 700;
+    border: 3px solid #388e3c;
+    border-radius: 50px;
+    background: #fff;
+    color: #388e3c;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .listen-btn:active {
+    transform: scale(0.95);
+  }
+
+  .game-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+  }
+
+  .option-card {
+    height: 120px;
+    border-radius: 24px;
+    cursor: pointer;
+    background: #fff;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.08), 0 10px 20px rgba(0,0,0,0.08);
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+  }
+
+  .option-card .opt-emoji {
+    font-size: 44px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .option-card .opt-text {
+    font-size: 15px;
+    font-weight: 800;
+    color: #333;
+  }
+
+  .option-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .option-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.08), 0 5px 10px rgba(0,0,0,0.08);
+  }
+
+  .option-card.correct {
+    animation: correct-pulse 0.6s;
+    border-color: #2e7d32;
+  }
+
+  .option-card.wrong {
+    animation: wrong-shake 0.5s;
+    border-color: #f44336;
+  }
+
+  @keyframes correct-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  @keyframes wrong-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .score-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-size: clamp(18px, 4.5vw, 24px);
+    font-weight: 800;
+    color: #388e3c;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+  }
+
+  .feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: clamp(40px, 12vw, 80px);
+    font-weight: 900;
+    z-index: 200;
+    pointer-events: none;
+    text-shadow: 4px 4px 0 #fff;
+  }
+
+  .feedback.show {
+    animation: feedback-pop 1.2s ease-out forwards;
+  }
+
+  @keyframes feedback-pop {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(-20deg); opacity: 0; }
+    30% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); opacity: 1; }
+    70% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); opacity: 0; }
+  }
+
+  .confetti {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 150;
+  }
+
+  .footer-tip {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    .body-grid { gap: 12px; padding: 14px; }
+    .body-emoji { font-size: 48px; }
+    .pop-card { padding: 30px 28px; }
+    .pop-emoji { font-size: 90px; }
+    .option-card { height: 100px; }
+    .option-card .opt-emoji { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧒 学习身体部位</h1>
+  <div class="subtitle">Learn Body Parts · 点一点,听一听,玩一玩!</div>
+</header>
+
+<div class="mode-switch">
+  <button class="mode-btn active" id="learnModeBtn" onclick="switchMode('learn')">📖 学习</button>
+  <button class="mode-btn" id="gameModeBtn" onclick="switchMode('game')">🎮 游戏</button>
+</div>
+
+<div class="voice-settings">
+  <div class="voice-group">
+    <span class="voice-group-label">🗣️ 声音</span>
+    <button class="voice-toggle" id="voiceMaleBtn" onclick="setGender('male')">👨 男声</button>
+    <button class="voice-toggle active" id="voiceFemaleBtn" onclick="setGender('female')">👩 女声</button>
+  </div>
+  <div class="voice-group">
+    <span class="voice-group-label">🌍 口音</span>
+    <button class="voice-toggle active" id="accentUSBtn" onclick="setAccent('us')">🇺🇸 美式</button>
+    <button class="voice-toggle" id="accentUKBtn" onclick="setAccent('uk')">🇬🇧 英式</button>
+  </div>
+  <button class="voice-toggle" id="testVoiceBtn" style="background:#fff;color:#2e7d32;box-shadow:0 2px 6px rgba(0,0,0,0.1);" onclick="testVoice()">🔊 试听</button>
+</div>
+
+<section class="body-grid" id="learnArea"></section>
+
+<section class="game-area" id="gameArea">
+  <div class="score-box">⭐ 得分: <span id="scoreNum">0</span></div>
+  <div class="question-box">
+    <div class="question-label">👉 找一找这个身体部位!</div>
+    <div class="question-text" id="questionText">Head</div>
+    <div class="question-cn" id="questionCn">头</div>
+    <button class="listen-btn" onclick="speakCurrentQuestion()">🔊 再听一次</button>
+  </div>
+  <div class="game-options" id="gameOptions"></div>
+</section>
+
+<div class="pop-overlay" id="popOverlay" onclick="closePop()">
+  <div class="pop-card" onclick="event.stopPropagation()">
+    <button class="pop-close-btn" onclick="closePop()" aria-label="关闭">✕</button>
+    <div class="pop-emoji" id="popEmoji">🧒</div>
+    <div class="pop-en" id="popEn">Head</div>
+    <div class="pop-cn" id="popCn">头</div>
+    <div class="pop-fact" id="popFact">Think with it · 用它思考</div>
+    <div><button class="pop-speak-btn" onclick="speakPop()">🔊 再听一次</button></div>
+    <div class="pop-hint">点击空白处关闭 · Tap to close</div>
+  </div>
+</div>
+
+<div class="feedback" id="feedback"></div>
+
+<div class="footer-tip">💡 提示:点一点身体部位,摸摸自己身上的对应位置,边学边记!</div>
+
+<script>
+  // 头部:SVG 画一个可爱的圆脸(没有合适单 emoji)
+  const HEAD_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="38" fill="#ffe0b2" stroke="#ffcc80" stroke-width="2"/><path d="M22 38 Q 28 22 50 22 Q 72 22 78 38" fill="#8d6e63"/><circle cx="38" cy="48" r="4" fill="#4e342e"/><circle cx="62" cy="48" r="4" fill="#4e342e"/><circle cx="39" cy="47" r="1.5" fill="#fff"/><circle cx="63" cy="47" r="1.5" fill="#fff"/><path d="M42 62 Q 50 70 58 62" stroke="#4e342e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="58" r="3" fill="#ffab91" opacity="0.6"/><circle cx="70" cy="58" r="3" fill="#ffab91" opacity="0.6"/></svg>`;
+
+  // 脖子:SVG — 头+脖子(高亮)+肩膀,在身体上下文中展示
+  const NECK_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- 头(淡色) -->
+    <circle cx="50" cy="22" r="18" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <circle cx="43" cy="20" r="2.5" fill="#4e342e" opacity="0.5"/>
+    <circle cx="57" cy="20" r="2.5" fill="#4e342e" opacity="0.5"/>
+    <path d="M44 28 Q 50 32 56 28" stroke="#4e342e" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <!-- 脖子(高亮) -->
+    <rect x="42" y="40" width="16" height="22" rx="4" fill="#ffcc80" stroke="#ff9966" stroke-width="2.5"/>
+    <rect x="42" y="40" width="16" height="22" rx="4" fill="none" stroke="#e91e63" stroke-width="2" stroke-dasharray="3,2"/>
+    <!-- 肩膀(淡色) -->
+    <path d="M18 90 Q 18 68 50 62 Q 82 68 82 90 Z" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <!-- 箭头指向脖子 -->
+    <text x="12" y="54" font-size="16" fill="#e91e63">←</text>
+    <text x="80" y="54" font-size="16" fill="#e91e63">→</text>
+  </svg>`;
+
+  // 后背:SVG — 从背后看一个人,后背区域高亮
+  const BACK_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- 手臂(淡色) -->
+    <rect x="8" y="42" width="14" height="45" rx="7" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <rect x="78" y="42" width="14" height="45" rx="7" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <!-- 头(从后面看,棕发) -->
+    <circle cx="50" cy="16" r="13" fill="#8d6e63" stroke="#6d4c41" stroke-width="1.5"/>
+    <!-- 脖子 -->
+    <rect x="45" y="27" width="10" height="8" fill="#ffe0b2" stroke="#ffcc80" stroke-width="1"/>
+    <!-- 后背(高亮) -->
+    <path d="M24 92 Q 20 55 38 36 L 62 36 Q 80 55 76 92 Z" fill="#ffcc80" stroke="#ff9966" stroke-width="2.5"/>
+    <!-- 脊柱线 -->
+    <line x1="50" y1="38" x2="50" y2="90" stroke="#e0c3a0" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <!-- 肩胛骨 -->
+    <ellipse cx="38" cy="52" rx="8" ry="6" fill="#ffd6b3" opacity="0.6"/>
+    <ellipse cx="62" cy="52" rx="8" ry="6" fill="#ffd6b3" opacity="0.6"/>
+    <!-- 高亮边框 -->
+    <path d="M24 92 Q 20 55 38 36 L 62 36 Q 80 55 76 92 Z" fill="none" stroke="#e91e63" stroke-width="2" stroke-dasharray="3,2"/>
+  </svg>`;
+
+  // 脚趾:SVG — 俯视一只脚,5个脚趾+趾甲清晰可见,大脚趾高亮
+  const TOE_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- 脚掌 -->
+    <path d="M18 90 Q 12 62 24 48 Q 35 38 52 38 Q 72 38 82 52 Q 90 66 86 90 Z" fill="#ffe0b2" stroke="#ffcc80" stroke-width="2"/>
+    <!-- 大脚趾(高亮) -->
+    <ellipse cx="24" cy="40" rx="10" ry="9" fill="#ffcc80" stroke="#ff9966" stroke-width="2.5"/>
+    <ellipse cx="24" cy="38" rx="5" ry="3.5" fill="#fff3e0" stroke="#e0c3a0" stroke-width="0.5"/>
+    <!-- 脚趾2 -->
+    <circle cx="40" cy="34" r="6.5" fill="#ffd6b3" stroke="#ffcc80" stroke-width="1.5"/>
+    <ellipse cx="40" cy="32" rx="3" ry="2" fill="#fff3e0" stroke="#e0c3a0" stroke-width="0.5"/>
+    <!-- 脚趾3 -->
+    <circle cx="52" cy="33" r="6.5" fill="#ffd6b3" stroke="#ffcc80" stroke-width="1.5"/>
+    <ellipse cx="52" cy="31" rx="3" ry="2" fill="#fff3e0" stroke="#e0c3a0" stroke-width="0.5"/>
+    <!-- 脚趾4 -->
+    <circle cx="64" cy="35" r="6" fill="#ffd6b3" stroke="#ffcc80" stroke-width="1.5"/>
+    <ellipse cx="64" cy="33" rx="2.5" ry="1.8" fill="#fff3e0" stroke="#e0c3a0" stroke-width="0.5"/>
+    <!-- 小脚趾 -->
+    <circle cx="74" cy="40" r="5.5" fill="#ffd6b3" stroke="#ffcc80" stroke-width="1.5"/>
+    <ellipse cx="74" cy="38" rx="2.5" ry="1.5" fill="#fff3e0" stroke="#e0c3a0" stroke-width="0.5"/>
+    <!-- 大脚趾高亮圈 -->
+    <ellipse cx="24" cy="40" rx="10" ry="9" fill="none" stroke="#e91e63" stroke-width="2" stroke-dasharray="3,2"/>
+  </svg>`;
+
+  // 脸:SVG — 正面脸,粉色虚线圈出脸的范围
+  const FACE_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- 头部外轮廓(淡色) -->
+    <circle cx="50" cy="50" r="40" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.4"/>
+    <!-- 头发(淡色) -->
+    <path d="M14 48 Q 14 16 50 12 Q 86 16 86 48" fill="#8d6e63" opacity="0.35"/>
+    <!-- 耳朵(淡色) -->
+    <ellipse cx="12" cy="52" rx="4" ry="6" fill="#ffe0b2" opacity="0.35"/>
+    <ellipse cx="88" cy="52" rx="4" ry="6" fill="#ffe0b2" opacity="0.35"/>
+    <!-- 脸区域高亮(粉色虚线椭圆) -->
+    <ellipse cx="50" cy="55" rx="28" ry="33" fill="none" stroke="#e91e63" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <!-- 眼睛 -->
+    <circle cx="38" cy="48" r="4.5" fill="#4e342e"/>
+    <circle cx="62" cy="48" r="4.5" fill="#4e342e"/>
+    <circle cx="39" cy="47" r="1.5" fill="#fff"/>
+    <circle cx="63" cy="47" r="1.5" fill="#fff"/>
+    <!-- 鼻子 -->
+    <path d="M50 52 L47 62 L53 62 Z" fill="#ffab91" stroke="#e0c3a0" stroke-width="0.5"/>
+    <!-- 嘴巴 -->
+    <path d="M42 68 Q 50 76 58 68" stroke="#4e342e" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- 脸颊红晕 -->
+    <circle cx="30" cy="62" r="5" fill="#ffab91" opacity="0.5"/>
+    <circle cx="70" cy="62" r="5" fill="#ffab91" opacity="0.5"/>
+    <!-- 雀斑 -->
+    <circle cx="34" cy="58" r="0.8" fill="#8d6e63" opacity="0.4"/>
+    <circle cx="66" cy="58" r="0.8" fill="#8d6e63" opacity="0.4"/>
+  </svg>`;
+
+  // 皮肤:SVG — 一只手,皮肤表面高亮,有纹理细节
+  const SKIN_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- 手臂 -->
+    <rect x="36" y="55" width="28" height="38" rx="10" fill="#ffe0b2" stroke="#ffcc80" stroke-width="2"/>
+    <!-- 手掌 -->
+    <ellipse cx="50" cy="52" rx="24" ry="20" fill="#ffe0b2" stroke="#ffcc80" stroke-width="2"/>
+    <!-- 手指 -->
+    <rect x="32" y="28" width="9" height="24" rx="4.5" fill="#ffe0b2" stroke="#ffcc80" stroke-width="1.5"/>
+    <rect x="42" y="20" width="9" height="32" rx="4.5" fill="#ffe0b2" stroke="#ffcc80" stroke-width="1.5"/>
+    <rect x="52" y="18" width="9" height="34" rx="4.5" fill="#ffe0b2" stroke="#ffcc80" stroke-width="1.5"/>
+    <rect x="62" y="22" width="9" height="30" rx="4.5" fill="#ffe0b2" stroke="#ffcc80" stroke-width="1.5"/>
+    <rect x="71" y="30" width="8" height="22" rx="4" fill="#ffe0b2" stroke="#ffcc80" stroke-width="1.5"/>
+    <!-- 皮肤表面高亮(粉色虚线) -->
+    <ellipse cx="50" cy="55" rx="16" ry="12" fill="none" stroke="#e91e63" stroke-width="2.5" stroke-dasharray="3,2"/>
+    <!-- 皮肤纹理(小点) -->
+    <circle cx="44" cy="53" r="0.8" fill="#e0c3a0"/>
+    <circle cx="50" cy="56" r="0.8" fill="#e0c3a0"/>
+    <circle cx="56" cy="52" r="0.8" fill="#e0c3a0"/>
+    <circle cx="47" cy="58" r="0.8" fill="#e0c3a0"/>
+    <circle cx="53" cy="50" r="0.8" fill="#e0c3a0"/>
+    <!-- 指向高亮区域 -->
+    <text x="20" y="58" font-size="14" fill="#e91e63">←</text>
+  </svg>`;
+
+  // 肩膀:SVG — 头(淡)+脖子(淡)+肩膀(高亮)+手臂(淡)
+  const SHOULDER_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- 头(淡色) -->
+    <circle cx="50" cy="16" r="14" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <circle cx="44" cy="14" r="2.5" fill="#4e342e" opacity="0.5"/>
+    <circle cx="56" cy="14" r="2.5" fill="#4e342e" opacity="0.5"/>
+    <!-- 脖子(淡色) -->
+    <rect x="44" y="28" width="12" height="8" fill="#fff3e0" stroke="#ffcc80" stroke-width="1" opacity="0.5"/>
+    <!-- 肩膀(高亮) -->
+    <path d="M14 58 Q 14 42 32 38 L 68 38 Q 86 42 86 58 L 86 66 Q 86 72 80 72 L 20 72 Q 14 72 14 66 Z" fill="#ffcc80" stroke="#ff9966" stroke-width="2.5"/>
+    <!-- 肩关节圆球 -->
+    <circle cx="20" cy="50" r="8" fill="#ffd6b3" stroke="#ffcc80" stroke-width="1.5"/>
+    <circle cx="80" cy="50" r="8" fill="#ffd6b3" stroke="#ffcc80" stroke-width="1.5"/>
+    <!-- 高亮边框 -->
+    <path d="M14 58 Q 14 42 32 38 L 68 38 Q 86 42 86 58 L 86 66 Q 86 72 80 72 L 20 72 Q 14 72 14 66 Z" fill="none" stroke="#e91e63" stroke-width="2" stroke-dasharray="3,2"/>
+    <!-- 手臂(淡色) -->
+    <rect x="8" y="52" width="12" height="35" rx="6" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <rect x="80" y="52" width="12" height="35" rx="6" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+  </svg>`;
+
+  // 膝盖:SVG — 侧视一条腿,大腿(淡)+膝盖(高亮)+小腿(淡)+脚(淡)
+  const KNEE_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- 大腿(淡色) -->
+    <path d="M38 8 L 58 8 L 56 42 L 40 42 Z" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <!-- 膝盖(高亮) -->
+    <circle cx="48" cy="50" r="13" fill="#ffcc80" stroke="#ff9966" stroke-width="2.5"/>
+    <!-- 髌骨细节 -->
+    <circle cx="48" cy="50" r="7" fill="#ffd6b3" stroke="#ffcc80" stroke-width="1"/>
+    <!-- 高亮边框 -->
+    <circle cx="48" cy="50" r="13" fill="none" stroke="#e91e63" stroke-width="2" stroke-dasharray="3,2"/>
+    <!-- 小腿(淡色) -->
+    <path d="M41 58 L 55 58 L 53 92 L 43 92 Z" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <!-- 脚(淡色) -->
+    <ellipse cx="54" cy="94" rx="13" ry="5" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5" opacity="0.5"/>
+    <!-- 箭头指向膝盖 -->
+    <text x="66" y="54" font-size="14" fill="#e91e63">←</text>
+  </svg>`;
+
+  const bodyParts = [
+    { emoji: HEAD_SVG, en: "Head",    cn: "头",   fact: "Think with it · 用它思考" },
+    { emoji: FACE_SVG, en: "Face",    cn: "脸",   fact: "On your head · 在头上" },
+    { emoji: "👁️", en: "Eye",     cn: "眼睛", fact: "See things · 看东西" },
+    { emoji: "👂", en: "Ear",     cn: "耳朵", fact: "Hear sounds · 听声音" },
+    { emoji: "👃", en: "Nose",    cn: "鼻子", fact: "Smell things · 闻味道" },
+    { emoji: "👄", en: "Mouth",   cn: "嘴巴", fact: "Eat and talk · 吃饭说话" },
+    { emoji: "👅", en: "Tongue",  cn: "舌头", fact: "Taste food · 尝味道" },
+    { emoji: "🦷", en: "Tooth",   cn: "牙齿", fact: "Chew food · 咬食物" },
+    { emoji: NECK_SVG, en: "Neck",  cn: "脖子", fact: "Holds your head · 支撑头" },
+    { emoji: SHOULDER_SVG, en: "Shoulder", cn: "肩膀", fact: "Connects arms · 连着手臂" },
+    { emoji: SKIN_SVG, en: "Skin",    cn: "皮肤", fact: "Covers your body · 包在身上" },
+    { emoji: "✋", en: "Hand",    cn: "手",   fact: "Hold things · 拿东西" },
+    { emoji: "👆", en: "Finger",  cn: "手指", fact: "Point things · 指东西" },
+    { emoji: BACK_SVG, en: "Back",   cn: "后背", fact: "Behind you · 在身后" },
+    { emoji: "💪", en: "Arm",     cn: "手臂", fact: "Lift things · 举东西" },
+    { emoji: "🦵", en: "Leg",     cn: "腿",   fact: "Stand and jump · 站立跳跃" },
+    { emoji: KNEE_SVG, en: "Knee",    cn: "膝盖", fact: "Helps you bend · 帮你弯腿" },
+    { emoji: "🦶", en: "Foot",    cn: "脚",   fact: "Walk and run · 走路跑步" },
+    { emoji: TOE_SVG, en: "Toe",    cn: "脚趾", fact: "On your foot · 脚上的趾头" },
+    { emoji: "💇", en: "Hair",    cn: "头发", fact: "On your head · 长在头上" }
+  ];
+
+  let score = 0;
+  let currentShowItem = null;
+  let currentAnswer = null;
+
+  function initLearnArea() {
+    const area = document.getElementById('learnArea');
+    area.innerHTML = bodyParts.map((f, i) => `
+      <div class="body-card" onclick="showPart(${i})">
+        <div class="body-emoji">${f.emoji === '头发' ? '💇' : f.emoji}</div>
+        <div class="en-name">${f.en}<span class="speaker-icon">🔊</span></div>
+        <div class="cn-name">${f.cn}</div>
+      </div>
+    `).join('');
+  }
+
+  function showPart(i) {
+    const f = bodyParts[i];
+    currentShowItem = f;
+    const displayEmoji = f.emoji === '头发' ? '💇' : f.emoji;
+    document.getElementById('popEmoji').innerHTML = displayEmoji;
+    document.getElementById('popEn').textContent = f.en;
+    document.getElementById('popCn').textContent = f.cn;
+    document.getElementById('popFact').textContent = "💡 " + f.fact;
+    document.getElementById('popOverlay').classList.add('show');
+    speak(f.en);
+  }
+
+  function closePop() {
+    document.getElementById('popOverlay').classList.remove('show');
+  }
+
+  function speakPop(){ if(currentShowItem) speak(currentShowItem.en); }
+
+  let voiceGender = localStorage.getItem('vbp_gender') || 'female';
+  let voiceAccent = localStorage.getItem('vbp_accent') || 'us';
+  let cachedVoices = [];
+
+  const MALE_NAMES = ['alex','fred','tom','ralph','aaron','luca','markus','gordon','james','daniel','oliver','arthur','george','ryan','guy','reed','rocko','david','mark','eric','benjamin','jacob','liam','noah'];
+  const FEMALE_NAMES = ['samantha','victoria','karen','moira','tessa','zoe','fiona','veena','kate','serena','hannah','amy','emma','joanna','kendra','kimberly','salli','hazel','sonia','libby','aria','jenny','michelle','linda','heather','susan','lisa','zira','nancy','amber'];
+
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    cachedVoices = window.speechSynthesis.getVoices();
+  }
+
+  function pickVoice(accent, gender) {
+    const voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+    const langPrefix = accent === 'uk' ? 'en-GB' : 'en-US';
+    let langVoices = voices.filter(v => v.lang === langPrefix);
+    if (langVoices.length === 0) langVoices = voices.filter(v => v.lang.toLowerCase().startsWith(langPrefix.toLowerCase()));
+    if (langVoices.length === 0) langVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
+    if (langVoices.length === 0) return null;
+
+    const preferred = gender === 'male' ? MALE_NAMES : FEMALE_NAMES;
+    for (const name of preferred) {
+      const match = langVoices.find(v => v.name.toLowerCase().includes(name));
+      if (match) return match;
+    }
+    const genderHint = gender === 'male' ? /(male|man|\bm\b)/ : /(female|woman|\bf\b)/;
+    const hinted = langVoices.find(v => genderHint.test(v.name.toLowerCase()));
+    if (hinted) return hinted;
+
+    if (langVoices.length === 1) return langVoices[0];
+    const sorted = [...langVoices].sort((a,b) => a.name.localeCompare(b.name));
+    return gender === 'male' ? sorted[0] : sorted[sorted.length - 1];
+  }
+
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const voice = pickVoice(voiceAccent, voiceGender);
+    if (voice) { u.voice = voice; u.lang = voice.lang; }
+    else { u.lang = voiceAccent === 'uk' ? 'en-GB' : 'en-US'; }
+    u.rate = 0.8;
+    u.pitch = voiceGender === 'male' ? 0.9 : 1.15;
+    window.speechSynthesis.speak(u);
+  }
+
+  function setGender(g) {
+    voiceGender = g;
+    localStorage.setItem('vbp_gender', g);
+    document.getElementById('voiceMaleBtn').classList.toggle('active', g === 'male');
+    document.getElementById('voiceFemaleBtn').classList.toggle('active', g === 'female');
+  }
+
+  function setAccent(a) {
+    voiceAccent = a;
+    localStorage.setItem('vbp_accent', a);
+    document.getElementById('accentUSBtn').classList.toggle('active', a === 'us');
+    document.getElementById('accentUKBtn').classList.toggle('active', a === 'uk');
+  }
+
+  function testVoice() {
+    speak("Hello! Let's learn body parts!");
+  }
+
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  function switchMode(mode) {
+    const learnBtn = document.getElementById('learnModeBtn');
+    const gameBtn = document.getElementById('gameModeBtn');
+    const learnArea = document.getElementById('learnArea');
+    const gameArea = document.getElementById('gameArea');
+    if (mode === 'learn') {
+      learnBtn.classList.add('active');
+      gameBtn.classList.remove('active');
+      learnArea.style.display = 'grid';
+      gameArea.classList.remove('show');
+    } else {
+      gameBtn.classList.add('active');
+      learnBtn.classList.remove('active');
+      learnArea.style.display = 'none';
+      gameArea.classList.add('show');
+      newQuestion();
+    }
+  }
+
+  function newQuestion() {
+    const shuffled = [...bodyParts].sort(() => Math.random() - 0.5);
+    const options = shuffled.slice(0, 4);
+    currentAnswer = options[Math.floor(Math.random() * options.length)];
+
+    document.getElementById('questionText').textContent = currentAnswer.en;
+    document.getElementById('questionCn').textContent = currentAnswer.cn;
+
+    const optArea = document.getElementById('gameOptions');
+    optArea.innerHTML = options.map(f => {
+      const displayEmoji = f.emoji === '头发' ? '💇' : f.emoji;
+      return `
+      <div class="option-card" onclick="checkAnswer('${f.en}', this)">
+        <div class="opt-emoji">${displayEmoji}</div>
+        <div class="opt-text">${f.en}</div>
+      </div>`;
+    }).join('');
+
+    setTimeout(() => speak(currentAnswer.en), 300);
+  }
+
+  function speakCurrentQuestion() {
+    if (currentAnswer) speak(currentAnswer.en);
+  }
+
+  function checkAnswer(answer, el) {
+    if (answer === currentAnswer.en) {
+      el.classList.add('correct');
+      score++;
+      document.getElementById('scoreNum').textContent = score;
+      showFeedback("✅ 真棒!", "#2e7d32");
+      launchConfetti();
+      speak(currentAnswer.en);
+      setTimeout(() => { newQuestion(); }, 1500);
+    } else {
+      el.classList.add('wrong');
+      showFeedback("😢 再试试!", "#f44336");
+      setTimeout(() => el.classList.remove('wrong'), 600);
+    }
+  }
+
+  function showFeedback(text, color) {
+    const fb = document.getElementById('feedback');
+    fb.textContent = text;
+    fb.style.color = color;
+    fb.classList.remove('show');
+    void fb.offsetWidth;
+    fb.classList.add('show');
+  }
+
+  function launchConfetti() {
+    const colorsList = ['#2e7d32','#388e3c','#00897b','#26a69a','#66bb6a','#81c784'];
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.background = colorsList[Math.floor(Math.random() * colorsList.length)];
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.top = '-20px';
+      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      c.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(c);
+
+      const duration = 1500 + Math.random() * 1500;
+      const drift = (Math.random() - 0.5) * 200;
+      c.animate([
+        { transform: c.style.transform, top: '-20px', opacity: 1 },
+        { transform: `translateX(${drift}px) rotate(${720 + Math.random()*360}deg)`, top: '100vh', opacity: 0.8 }
+      ], { duration, easing: 'cubic-bezier(0.3, 0.7, 0.4, 1)' });
+
+      setTimeout(() => c.remove(), duration);
+    }
+  }
+
+  initLearnArea();
+  setGender(voiceGender);
+  setAccent(voiceAccent);
+</script>
+
+</body>
+</html>

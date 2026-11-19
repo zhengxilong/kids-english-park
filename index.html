@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌟 我的英语乐园 · My English Park</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(160deg, #fff9e6 0%, #ffe6f0 35%, #e6f0ff 70%, #e6ffe6 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    user-select: none;
+    position: relative;
+  }
+
+  /* 漂浮装饰(云朵/星星) */
+  .float-deco {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.7;
+  }
+  .float-deco.cloud { font-size: 60px; animation: float-x 20s linear infinite; }
+  .float-deco.star { font-size: 32px; animation: twinkle 3s ease-in-out infinite; }
+
+  @keyframes float-x {
+    from { transform: translateX(-100px); }
+    to { transform: translateX(110vw); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+    50% { opacity: 0.9; transform: scale(1.2) rotate(180deg); }
+  }
+
+  /* 顶部标题 */
+  header {
+    text-align: center;
+    padding: 32px 16px 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  h1 {
+    font-size: clamp(32px, 7vw, 56px);
+    color: #ff5e8a;
+    text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(0,0,0,0.08);
+    letter-spacing: 3px;
+    animation: title-wobble 3s ease-in-out infinite;
+  }
+
+  @keyframes title-wobble {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+
+  .subtitle {
+    font-size: clamp(16px, 4vw, 24px);
+    color: #7c6bad;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  .welcome {
+    font-size: clamp(14px, 3.5vw, 18px);
+    color: #999;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* 主题卡片网格 */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    padding: 24px 20px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .theme-card {
+    display: block;
+    text-decoration: none;
+    background: #fff;
+    border-radius: 32px;
+    padding: 28px 18px 24px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 10px 0 rgba(0,0,0,0.08), 0 14px 28px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 5px solid #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .theme-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 70px;
+    background: var(--theme-color);
+    opacity: 0.15;
+  }
+
+  .theme-card:hover {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+
+  .theme-card:active {
+    transform: translateY(3px);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.08), 0 8px 16px rgba(0,0,0,0.08);
+  }
+
+  .theme-emoji {
+    font-size: 80px;
+    line-height: 1;
+    margin: 0 auto 14px;
+    position: relative;
+    z-index: 1;
+    animation: emoji-dance 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,0.18));
+  }
+
+  @keyframes emoji-dance {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-8px) rotate(5deg); }
+  }
+
+  .theme-cn {
+    font-size: clamp(22px, 5vw, 28px);
+    font-weight: 900;
+    color: var(--theme-color);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .theme-en {
+    font-size: clamp(15px, 3.5vw, 19px);
+    color: #888;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+  }
+
+  .theme-arrow {
+    margin-top: 12px;
+    font-size: 20px;
+    color: var(--theme-color);
+    font-weight: 800;
+    opacity: 0.6;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 底部 */
+  footer {
+    text-align: center;
+    padding: 24px 16px 32px;
+    color: #aaa;
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer .heart {
+    color: #ff5e8a;
+    animation: heart-beat 1.2s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  @keyframes heart-beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+  }
+
+  @media (max-width: 480px) {
+    .cards-grid { gap: 16px; padding: 18px 14px 30px; }
+    .theme-card { padding: 22px 14px 20px; }
+    .theme-emoji { font-size: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 漂浮装饰 -->
+<div class="float-deco cloud" style="top: 8%; animation-delay: 0s;">☁️</div>
+<div class="float-deco cloud" style="top: 55%; animation-delay: 8s; animation-duration: 26s;">☁️</div>
+<div class="float-deco star" style="top: 18%; right: 8%;">⭐</div>
+<div class="float-deco star" style="top: 40%; left: 5%; animation-delay: 1s;">✨</div>
+<div class="float-deco star" style="top: 75%; right: 12%; animation-delay: 2s;">🌟</div>
+<div class="float-deco star" style="top: 88%; left: 10%; animation-delay: 0.5s;">⭐</div>
+
+<header>
+  <h1>🌟 我的英语乐园</h1>
+  <div class="subtitle">My English Park</div>
+  <div class="welcome">👉 选一个主题,开始学习吧!</div>
+</header>
+
+<main class="cards-grid">
+
+  <a class="theme-card" href="learn-colors.html" style="--theme-color: #ff5e8a;">
+    <div class="theme-emoji">🌈</div>
+    <div class="theme-cn">颜色</div>
+    <div class="theme-en">Colors</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-animals.html" style="--theme-color: #4caf50;">
+    <div class="theme-emoji">🐶</div>
+    <div class="theme-cn">动物</div>
+    <div class="theme-en">Animals</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-shapes.html" style="--theme-color: #6c5ce7;">
+    <div class="theme-emoji">🔷</div>
+    <div class="theme-cn">形状</div>
+    <div class="theme-en">Shapes</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-fruits.html" style="--theme-color: #ff6b6b;">
+    <div class="theme-emoji">🍉</div>
+    <div class="theme-cn">水果</div>
+    <div class="theme-en">Fruits</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-vegetables.html" style="--theme-color: #2e7d32;">
+    <div class="theme-emoji">🥕</div>
+    <div class="theme-cn">蔬菜</div>
+    <div class="theme-en">Vegetables</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-clothes.html" style="--theme-color: #c2185b;">
+    <div class="theme-emoji">👗</div>
+    <div class="theme-cn">衣服</div>
+    <div class="theme-en">Clothes</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-weather.html" style="--theme-color: #0288d1;">
+    <div class="theme-emoji">☀️</div>
+    <div class="theme-cn">天气</div>
+    <div class="theme-en">Weather</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-days.html" style="--theme-color: #e65100;">
+    <div class="theme-emoji">📅</div>
+    <div class="theme-cn">星期</div>
+    <div class="theme-en">Days</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-months.html" style="--theme-color: #5c6bc0;">
+    <div class="theme-emoji">🗓️</div>
+    <div class="theme-cn">月份</div>
+    <div class="theme-en">Months</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-solar-system.html" style="--theme-color: #1a1a2e;">
+    <div class="theme-emoji">🪐</div>
+    <div class="theme-cn">太阳系</div>
+    <div class="theme-en">Solar System</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-living-room.html" style="--theme-color: #bf360c;">
+    <div class="theme-emoji">🛋️</div>
+    <div class="theme-cn">客厅家具</div>
+    <div class="theme-en">Living Room</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-kitchen.html" style="--theme-color: #d32f2f;">
+    <div class="theme-emoji">🍳</div>
+    <div class="theme-cn">厨房用具</div>
+    <div class="theme-en">Kitchen</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-alphabet.html" style="--theme-color: #1565c0;">
+    <div class="theme-emoji">🔤</div>
+    <div class="theme-cn">字母拼读</div>
+    <div class="theme-en">Alphabet</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-bedroom.html" style="--theme-color: #3f51b5;">
+    <div class="theme-emoji">🛏️</div>
+    <div class="theme-cn">卧室家具</div>
+    <div class="theme-en">Bedroom</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-body.html" style="--theme-color: #2e7d32;">
+    <div class="theme-emoji">🧒</div>
+    <div class="theme-cn">身体部位</div>
+    <div class="theme-en">Body Parts</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-color-plates.html" style="--theme-color: #e65100;">
+    <div class="theme-emoji">🍽️</div>
+    <div class="theme-cn">彩色盘子</div>
+    <div class="theme-en">Colors on Plates</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-color-cups.html" style="--theme-color: #283593;">
+    <div class="theme-emoji">🥤</div>
+    <div class="theme-cn">彩色杯子</div>
+    <div class="theme-en">Colors with Cups</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+  <a class="theme-card" href="learn-color-cups-2.html" style="--theme-color: #00897b;">
+    <div class="theme-emoji">🥤</div>
+    <div class="theme-cn">进阶彩色杯子</div>
+    <div class="theme-en">More Colors with Cups</div>
+    <div class="theme-arrow">点我学习 →</div>
+  </a>
+
+</main>
+
+<footer>
+  Made with <span class="heart">❤️</span> for little learners · 适合 4 岁小朋友的英语启蒙
+</footer>
+
+</body>
+</html>

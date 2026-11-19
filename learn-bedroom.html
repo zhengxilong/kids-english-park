@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛏️ 学习卧室家具 Learn Bedroom</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #e1f5fe 0%, #e8eaf6 50%, #fce4ec 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    user-select: none;
+  }
+
+  /* 顶部标题 */
+  header {
+    text-align: center;
+    padding: 24px 16px 12px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 6vw, 44px);
+    color: #1565c0;
+    text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(0,0,0,0.08);
+    letter-spacing: 2px;
+    animation: bounce-title 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce-title {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+
+  .subtitle {
+    font-size: clamp(14px, 3.5vw, 20px);
+    color: #3f51b5;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* 模式切换按钮 */
+  .mode-switch {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 16px 0 8px;
+  }
+
+  .mode-btn {
+    padding: 12px 28px;
+    font-size: clamp(16px, 4vw, 20px);
+    font-weight: 800;
+    border: 4px solid #fff;
+    border-radius: 50px;
+    background: #fff;
+    color: #3f51b5;
+    cursor: pointer;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.08);
+    transition: all 0.15s;
+  }
+
+  .mode-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.08);
+  }
+
+  .mode-btn.active {
+    background: linear-gradient(135deg, #1565c0, #7e57c2);
+    color: #fff;
+    border-color: #fff;
+  }
+
+  /* 声音设置栏 */
+  .voice-settings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px 18px;
+    flex-wrap: wrap;
+    padding: 8px 16px 16px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .voice-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.7);
+    padding: 6px 8px;
+    border-radius: 50px;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.06);
+  }
+
+  .voice-group-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #3f51b5;
+    padding-left: 6px;
+  }
+
+  .voice-toggle {
+    padding: 7px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .voice-toggle.active {
+    background: #fff;
+    color: #1565c0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .voice-toggle:active {
+    transform: scale(0.94);
+  }
+
+  /* 家具网格 */
+  .furniture-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .furniture-card {
+    background: #fff;
+    border-radius: 28px;
+    padding: 18px 12px 16px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.08), 0 12px 24px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 4px solid #fff;
+  }
+
+  .furniture-card:hover {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+
+  .furniture-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.08), 0 6px 12px rgba(0,0,0,0.06);
+  }
+
+  .furniture-emoji {
+    font-size: 56px;
+    line-height: 1;
+    margin: 0 auto 10px;
+    animation: emoji-bounce 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+  }
+
+  /* SVG 图标尺寸继承父容器字体大小 */
+  .furniture-emoji svg,
+  .pop-emoji svg,
+  .opt-emoji svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+  }
+
+  @keyframes emoji-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(-3deg); }
+    75% { transform: translateY(-5px) rotate(3deg); }
+  }
+
+  .en-name {
+    font-size: clamp(19px, 4.5vw, 24px);
+    font-weight: 800;
+    color: #333;
+    letter-spacing: 1px;
+  }
+
+  .cn-name {
+    font-size: clamp(14px, 3.5vw, 17px);
+    color: #888;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .speaker-icon {
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  /* 弹出大字提示 */
+  .pop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+  }
+
+  .pop-overlay.show {
+    display: flex;
+    animation: fade-in 0.2s;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .pop-card {
+    background: #fff;
+    border-radius: 40px;
+    padding: 40px 50px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 90vw;
+    position: relative;
+  }
+
+  .pop-speak-btn {
+    margin-top: 20px;
+    padding: 14px 36px;
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 900;
+    border: 4px solid #fff;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #ec407a, #d81b60);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #880e4f, 0 10px 20px rgba(0,0,0,0.15);
+    transition: all 0.12s;
+    letter-spacing: 1px;
+  }
+  .pop-speak-btn:hover { transform: translateY(-2px); }
+  .pop-speak-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #880e4f, 0 4px 8px rgba(0,0,0,0.15);
+  }
+  .pop-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    background: linear-gradient(135deg, #ef5350, #c62828);
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #8b0000, 0 6px 12px rgba(0,0,0,0.18);
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .pop-close-btn:hover { transform: translateY(-2px) rotate(90deg); }
+  .pop-close-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #8b0000, 0 3px 6px rgba(0,0,0,0.18);
+  }
+
+  @keyframes pop-in {
+    from { transform: scale(0.3); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .pop-emoji {
+    font-size: 120px;
+    line-height: 1;
+    margin: 0 auto 16px;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.2));
+    animation: emoji-bounce 2s ease-in-out infinite;
+  }
+
+  .pop-en {
+    font-size: clamp(36px, 10vw, 56px);
+    font-weight: 900;
+    color: #333;
+    letter-spacing: 2px;
+  }
+
+  .pop-cn {
+    font-size: clamp(22px, 6vw, 32px);
+    color: #888;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  .pop-fact {
+    font-size: clamp(18px, 5vw, 24px);
+    color: #1565c0;
+    margin-top: 14px;
+    font-weight: 800;
+    background: #e3f2fd;
+    display: inline-block;
+    padding: 8px 22px;
+    border-radius: 50px;
+    border: 3px dashed #90caf9;
+  }
+
+  .pop-hint {
+    font-size: 14px;
+    color: #bbb;
+    margin-top: 18px;
+  }
+
+  /* 游戏模式 */
+  .game-area {
+    display: none;
+    padding: 30px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .game-area.show {
+    display: block;
+  }
+
+  .question-box {
+    background: #fff;
+    border-radius: 30px;
+    padding: 28px 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.08), 0 12px 24px rgba(0,0,0,0.06);
+  }
+
+  .question-label {
+    font-size: clamp(16px, 4vw, 20px);
+    color: #3f51b5;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-size: clamp(26px, 7vw, 40px);
+    font-weight: 900;
+    color: #1565c0;
+  }
+
+  .question-cn {
+    font-size: clamp(20px, 5vw, 28px);
+    color: #555;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  .listen-btn {
+    margin-top: 14px;
+    padding: 10px 22px;
+    font-size: 16px;
+    font-weight: 700;
+    border: 3px solid #3f51b5;
+    border-radius: 50px;
+    background: #fff;
+    color: #3f51b5;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .listen-btn:active {
+    transform: scale(0.95);
+  }
+
+  .game-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+  }
+
+  .option-card {
+    height: 120px;
+    border-radius: 24px;
+    cursor: pointer;
+    background: #fff;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.08), 0 10px 20px rgba(0,0,0,0.08);
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+  }
+
+  .option-card .opt-emoji {
+    font-size: 44px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .option-card .opt-text {
+    font-size: 15px;
+    font-weight: 800;
+    color: #333;
+  }
+
+  .option-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .option-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.08), 0 5px 10px rgba(0,0,0,0.08);
+  }
+
+  .option-card.correct {
+    animation: correct-pulse 0.6s;
+    border-color: #1565c0;
+  }
+
+  .option-card.wrong {
+    animation: wrong-shake 0.5s;
+    border-color: #f44336;
+  }
+
+  @keyframes correct-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  @keyframes wrong-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .score-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-size: clamp(18px, 4.5vw, 24px);
+    font-weight: 800;
+    color: #3f51b5;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+  }
+
+  /* 反馈文字 */
+  .feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: clamp(40px, 12vw, 80px);
+    font-weight: 900;
+    z-index: 200;
+    pointer-events: none;
+    text-shadow: 4px 4px 0 #fff;
+  }
+
+  .feedback.show {
+    animation: feedback-pop 1.2s ease-out forwards;
+  }
+
+  @keyframes feedback-pop {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(-20deg); opacity: 0; }
+    30% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); opacity: 1; }
+    70% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); opacity: 0; }
+  }
+
+  /* 五彩纸屑 */
+  .confetti {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 150;
+  }
+
+  .footer-tip {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    .furniture-grid { gap: 12px; padding: 14px; }
+    .furniture-emoji { font-size: 48px; }
+    .pop-card { padding: 30px 28px; }
+    .pop-emoji { font-size: 90px; }
+    .option-card { height: 100px; }
+    .option-card .opt-emoji { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🛏️ 学习卧室家具</h1>
+  <div class="subtitle">Learn Bedroom · 点一点,听一听,玩一玩!</div>
+</header>
+
+<div class="mode-switch">
+  <button class="mode-btn active" id="learnModeBtn" onclick="switchMode('learn')">📖 学习</button>
+  <button class="mode-btn" id="gameModeBtn" onclick="switchMode('game')">🎮 游戏</button>
+</div>
+
+<div class="voice-settings">
+  <div class="voice-group">
+    <span class="voice-group-label">🗣️ 声音</span>
+    <button class="voice-toggle" id="voiceMaleBtn" onclick="setGender('male')">👨 男声</button>
+    <button class="voice-toggle active" id="voiceFemaleBtn" onclick="setGender('female')">👩 女声</button>
+  </div>
+  <div class="voice-group">
+    <span class="voice-group-label">🌍 口音</span>
+    <button class="voice-toggle active" id="accentUSBtn" onclick="setAccent('us')">🇺🇸 美式</button>
+    <button class="voice-toggle" id="accentUKBtn" onclick="setAccent('uk')">🇬🇧 英式</button>
+  </div>
+  <button class="voice-toggle" id="testVoiceBtn" style="background:#fff;color:#1565c0;box-shadow:0 2px 6px rgba(0,0,0,0.1);" onclick="testVoice()">🔊 试听</button>
+</div>
+
+<!-- 学习模式 -->
+<section class="furniture-grid" id="learnArea"></section>
+
+<!-- 游戏模式 -->
+<section class="game-area" id="gameArea">
+  <div class="score-box">⭐ 得分: <span id="scoreNum">0</span></div>
+  <div class="question-box">
+    <div class="question-label">👉 找一找这个家具!</div>
+    <div class="question-text" id="questionText">Bed</div>
+    <div class="question-cn" id="questionCn">床</div>
+    <button class="listen-btn" onclick="speakCurrentQuestion()">🔊 再听一次</button>
+  </div>
+  <div class="game-options" id="gameOptions"></div>
+</section>
+
+<!-- 大字弹窗 -->
+<div class="pop-overlay" id="popOverlay" onclick="closePop()">
+  <div class="pop-card" onclick="event.stopPropagation()">
+    <button class="pop-close-btn" onclick="closePop()" aria-label="关闭">✕</button>
+    <div class="pop-emoji" id="popEmoji">🛏️</div>
+    <div class="pop-en" id="popEn">Bed</div>
+    <div class="pop-cn" id="popCn">床</div>
+    <div class="pop-fact" id="popFact">Sleep here · 在这里睡觉</div>
+    <div><button class="pop-speak-btn" onclick="speakPop()">🔊 再听一次</button></div>
+    <div class="pop-hint">点击空白处关闭 · Tap to close</div>
+  </div>
+</div>
+
+<!-- 反馈文字 -->
+<div class="feedback" id="feedback"></div>
+
+<div class="footer-tip">💡 提示:点击家具可以听到英文发音和小知识哦!</div>
+
+<script>
+  // 床:SVG
+  const BED_SVG = `<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="40" width="104" height="40" rx="4" fill="#8d6e63"/><rect x="8" y="30" width="104" height="14" rx="3" fill="#ffffff"/><rect x="12" y="44" width="96" height="32" rx="2" fill="#fff3e0"/><rect x="12" y="56" width="96" height="20" rx="2" fill="#f8bbd0"/><rect x="14" y="46" width="28" height="10" rx="3" fill="#e3f2fd"/><circle cx="20" cy="51" r="2" fill="#90caf9"/><circle cx="30" cy="51" r="2" fill="#f8bbd0"/><rect x="6" y="24" width="6" height="56" rx="2" fill="#5d4037"/><rect x="108" y="34" width="6" height="46" rx="2" fill="#5d4037"/><circle cx="20" cy="14" r="8" fill="#fce4ec"/><path d="M14 14 A 6 6 0 0 1 26 14 Z" fill="#f8bbd0"/></svg>`;
+  // 衣柜:SVG
+  const WARDROBE_SVG = `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="8" width="76" height="104" rx="4" fill="#a1887f"/><rect x="16" y="12" width="32" height="96" fill="#efebe9"/><rect x="52" y="12" width="32" height="96" fill="#efebe9"/><circle cx="44" cy="60" r="2.5" fill="#8d6e63"/><circle cx="56" cy="60" r="2.5" fill="#8d6e63"/><rect x="48" y="8" width="4" height="104" fill="#8d6e63"/></svg>`;
+  // 床头柜:SVG
+  const NIGHTSTAND_SVG = `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="12" width="68" height="60" rx="4" fill="#a1887f"/><rect x="10" y="16" width="60" height="24" fill="#efebe9"/><rect x="10" y="44" width="60" height="24" fill="#efebe9"/><circle cx="40" cy="28" r="2" fill="#5d4037"/><circle cx="40" cy="56" r="2" fill="#5d4037"/><rect x="6" y="70" width="4" height="6" fill="#5d4037"/><rect x="70" y="70" width="4" height="6" fill="#5d4037"/></svg>`;
+  // 枕头:SVG(蓬松的白色枕头,带弧形蓬松感+缝线)
+  const PILLOW_SVG = `<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg"><ellipse cx="60" cy="76" rx="48" ry="3" fill="#000" opacity="0.1"/><rect x="12" y="18" width="96" height="52" rx="16" fill="#ffffff" stroke="#cfd8dc" stroke-width="2"/><path d="M12 30 Q 60 10 108 30" fill="none" stroke="#eceff1" stroke-width="2"/><path d="M12 58 Q 60 78 108 58" fill="none" stroke="#eceff1" stroke-width="2"/><line x1="24" y1="44" x2="96" y2="44" stroke="#eceff1" stroke-width="1.5" stroke-dasharray="5 3"/></svg>`;
+  // 被子:SVG(厚实的被子,带绗缝方格图案+边缘厚度)
+  const QUILT_SVG = `<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg"><ellipse cx="60" cy="84" rx="52" ry="3" fill="#000" opacity="0.1"/><rect x="10" y="24" width="100" height="54" rx="3" fill="#ec407a"/><rect x="10" y="18" width="100" height="8" rx="3" fill="#f48fb1"/><line x1="35" y1="24" x2="35" y2="78" stroke="#f8bbd0" stroke-width="1.2" stroke-dasharray="3 2"/><line x1="60" y1="24" x2="60" y2="78" stroke="#f8bbd0" stroke-width="1.2" stroke-dasharray="3 2"/><line x1="85" y1="24" x2="85" y2="78" stroke="#f8bbd0" stroke-width="1.2" stroke-dasharray="3 2"/><line x1="10" y1="42" x2="110" y2="42" stroke="#f8bbd0" stroke-width="1.2" stroke-dasharray="3 2"/><line x1="10" y1="60" x2="110" y2="60" stroke="#f8bbd0" stroke-width="1.2" stroke-dasharray="3 2"/><rect x="10" y="74" width="100" height="6" rx="2" fill="#c2185b"/></svg>`;
+  // 窗户:SVG(带窗框+窗帘+外面蓝天白云)
+  const WINDOW_SVG = `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="10" width="88" height="100" rx="3" fill="#8d6e63"/><rect x="12" y="16" width="76" height="88" fill="#e3f2fd"/><rect x="50" y="16" width="4" height="88" fill="#8d6e63"/><rect x="12" y="60" width="76" height="4" fill="#8d6e63"/><circle cx="32" cy="38" r="12" fill="#4fc3f7"/><ellipse cx="75" cy="32" rx="14" ry="5" fill="#ffffff"/><ellipse cx="82" cy="30" rx="10" ry="4" fill="#ffffff"/><ellipse cx="30" cy="78" rx="18" ry="6" fill="#ffffff"/><ellipse cx="38" cy="75" rx="12" ry="4" fill="#ffffff"/><rect x="2" y="6" width="10" height="108" rx="2" fill="#f48fb1"/><rect x="88" y="6" width="10" height="108" rx="2" fill="#f48fb1"/><circle cx="7" cy="60" r="2" fill="#ec407a"/><circle cx="93" cy="60" r="2" fill="#ec407a"/></svg>`;
+  // 梳妆台:SVG(带圆形镜子+桌面+抽屉)
+  const DRESSER_SVG = `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="34" rx="22" ry="28" fill="#ffffff" stroke="#8d6e63" stroke-width="3"/><ellipse cx="50" cy="34" rx="18" ry="24" fill="#fce4ec" stroke="#bdbdbd" stroke-width="1"/><rect x="30" y="60" width="40" height="4" fill="#8d6e63"/><rect x="14" y="64" width="72" height="42" rx="3" fill="#a1887f"/><rect x="18" y="68" width="64" height="16" fill="#efebe9"/><rect x="18" y="86" width="64" height="16" fill="#efebe9"/><circle cx="50" cy="76" r="2" fill="#5d4037"/><circle cx="50" cy="94" r="2" fill="#5d4037"/><rect x="14" y="104" width="4" height="8" fill="#5d4037"/><rect x="82" y="104" width="4" height="8" fill="#5d4037"/><circle cx="36" cy="30" r="3" fill="#ffe082" opacity="0.6"/></svg>`;
+
+  const furniture = [
+    { emoji: BED_SVG, en: "Bed",         cn: "床",     fact: "Sleep here · 在这里睡觉" },
+    { emoji: PILLOW_SVG, en: "Pillow",   cn: "枕头",   fact: "Rest your head · 放头休息" },
+    { emoji: QUILT_SVG, en: "Quilt",      cn: "被子",   fact: "Keep warm · 保暖" },
+    { emoji: WINDOW_SVG, en: "Window",   cn: "窗户",   fact: "See outside · 看外面" },
+    { emoji: WARDROBE_SVG, en: "Wardrobe", cn: "衣柜",   fact: "Keep clothes · 放衣服" },
+    { emoji: NIGHTSTAND_SVG, en: "Nightstand", cn: "床头柜", fact: "Put things · 放东西" },
+    { emoji: DRESSER_SVG, en: "Dresser", cn: "梳妆台", fact: "Get ready · 梳妆打扮" }
+  ];
+
+  let score = 0;
+  let currentShowItem = null;
+  let currentAnswer = null;
+
+  // 初始化学习区
+  function initLearnArea() {
+    const area = document.getElementById('learnArea');
+    area.innerHTML = furniture.map((f, i) => `
+      <div class="furniture-card" onclick="showFurniture(${i})">
+        <div class="furniture-emoji">${f.emoji}</div>
+        <div class="en-name">${f.en}<span class="speaker-icon">🔊</span></div>
+        <div class="cn-name">${f.cn}</div>
+      </div>
+    `).join('');
+  }
+
+  // 点击家具卡片
+  function showFurniture(i) {
+    const f = furniture[i];
+    currentShowItem = f;
+    document.getElementById('popEmoji').innerHTML = f.emoji;
+    document.getElementById('popEn').textContent = f.en;
+    document.getElementById('popCn').textContent = f.cn;
+    document.getElementById('popFact').textContent = "💡 " + f.fact;
+    document.getElementById('popOverlay').classList.add('show');
+    speak(f.en);
+  }
+
+  function closePop() {
+    document.getElementById('popOverlay').classList.remove('show');
+  }
+
+  function speakPop(){ if(currentShowItem) speak(currentShowItem.en); }
+
+  // ===== 声音设置 =====
+  let voiceGender = localStorage.getItem('vbr_gender') || 'female';
+  let voiceAccent = localStorage.getItem('vbr_accent') || 'us';
+  let cachedVoices = [];
+
+  const MALE_NAMES = [
+    'alex','fred','tom','ralph','aaron','luca','markus','gordon','james',
+    'daniel','oliver','arthur','george','ryan','guy','reed','rocko',
+    'david','mark','eric','benjamin','jacob','liam','noah'
+  ];
+  const FEMALE_NAMES = [
+    'samantha','victoria','karen','moira','tessa','zoe','fiona','veena',
+    'kate','serena','hannah','amy','emma','joanna','kendra','kimberly','salli',
+    'hazel','sonia','libby','aria','jenny','michelle','linda','heather',
+    'susan','lisa','zira','nancy','amber'
+  ];
+
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    cachedVoices = window.speechSynthesis.getVoices();
+  }
+
+  function pickVoice(accent, gender) {
+    const voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+    const langPrefix = accent === 'uk' ? 'en-GB' : 'en-US';
+    let langVoices = voices.filter(v => v.lang === langPrefix);
+    if (langVoices.length === 0) langVoices = voices.filter(v => v.lang.toLowerCase().startsWith(langPrefix.toLowerCase()));
+    if (langVoices.length === 0) langVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
+    if (langVoices.length === 0) return null;
+
+    const preferred = gender === 'male' ? MALE_NAMES : FEMALE_NAMES;
+    for (const name of preferred) {
+      const match = langVoices.find(v => v.name.toLowerCase().includes(name));
+      if (match) return match;
+    }
+    const genderHint = gender === 'male' ? /(male|man|\bm\b)/ : /(female|woman|\bf\b)/;
+    const hinted = langVoices.find(v => genderHint.test(v.name.toLowerCase()));
+    if (hinted) return hinted;
+
+    if (langVoices.length === 1) return langVoices[0];
+    const sorted = [...langVoices].sort((a,b) => a.name.localeCompare(b.name));
+    return gender === 'male' ? sorted[0] : sorted[sorted.length - 1];
+  }
+
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const voice = pickVoice(voiceAccent, voiceGender);
+    if (voice) {
+      u.voice = voice;
+      u.lang = voice.lang;
+    } else {
+      u.lang = voiceAccent === 'uk' ? 'en-GB' : 'en-US';
+    }
+    u.rate = 0.8;
+    u.pitch = voiceGender === 'male' ? 0.9 : 1.15;
+    window.speechSynthesis.speak(u);
+  }
+
+  function setGender(g) {
+    voiceGender = g;
+    localStorage.setItem('vbr_gender', g);
+    document.getElementById('voiceMaleBtn').classList.toggle('active', g === 'male');
+    document.getElementById('voiceFemaleBtn').classList.toggle('active', g === 'female');
+  }
+
+  function setAccent(a) {
+    voiceAccent = a;
+    localStorage.setItem('vbr_accent', a);
+    document.getElementById('accentUSBtn').classList.toggle('active', a === 'us');
+    document.getElementById('accentUKBtn').classList.toggle('active', a === 'uk');
+  }
+
+  function testVoice() {
+    speak("Hello! Let's learn bedroom furniture!");
+  }
+
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  // 切换模式
+  function switchMode(mode) {
+    const learnBtn = document.getElementById('learnModeBtn');
+    const gameBtn = document.getElementById('gameModeBtn');
+    const learnArea = document.getElementById('learnArea');
+    const gameArea = document.getElementById('gameArea');
+    if (mode === 'learn') {
+      learnBtn.classList.add('active');
+      gameBtn.classList.remove('active');
+      learnArea.style.display = 'grid';
+      gameArea.classList.remove('show');
+    } else {
+      gameBtn.classList.add('active');
+      learnBtn.classList.remove('active');
+      learnArea.style.display = 'none';
+      gameArea.classList.add('show');
+      newQuestion();
+    }
+  }
+
+  function newQuestion() {
+    const shuffled = [...furniture].sort(() => Math.random() - 0.5);
+    const options = shuffled.slice(0, 4);
+    currentAnswer = options[Math.floor(Math.random() * options.length)];
+
+    document.getElementById('questionText').textContent = currentAnswer.en;
+    document.getElementById('questionCn').textContent = currentAnswer.cn;
+
+    const optArea = document.getElementById('gameOptions');
+    optArea.innerHTML = options.map(f => `
+      <div class="option-card" onclick="checkAnswer('${f.en}', this)">
+        <div class="opt-emoji">${f.emoji}</div>
+        <div class="opt-text">${f.en}</div>
+      </div>
+    `).join('');
+
+    setTimeout(() => speak(currentAnswer.en), 300);
+  }
+
+  function speakCurrentQuestion() {
+    if (currentAnswer) speak(currentAnswer.en);
+  }
+
+  function checkAnswer(answer, el) {
+    if (answer === currentAnswer.en) {
+      el.classList.add('correct');
+      score++;
+      document.getElementById('scoreNum').textContent = score;
+      showFeedback("✅ 真棒!", "#1565c0");
+      launchConfetti();
+      speak(currentAnswer.en);
+      setTimeout(() => { newQuestion(); }, 1500);
+    } else {
+      el.classList.add('wrong');
+      showFeedback("😢 再试试!", "#f44336");
+      setTimeout(() => el.classList.remove('wrong'), 600);
+    }
+  }
+
+  function showFeedback(text, color) {
+    const fb = document.getElementById('feedback');
+    fb.textContent = text;
+    fb.style.color = color;
+    fb.classList.remove('show');
+    void fb.offsetWidth;
+    fb.classList.add('show');
+  }
+
+  function launchConfetti() {
+    const colorsList = ['#1565c0','#3f51b5','#7e57c2','#42a5f5','#81d4fa','#b39ddb'];
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.background = colorsList[Math.floor(Math.random() * colorsList.length)];
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.top = '-20px';
+      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      c.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(c);
+
+      const duration = 1500 + Math.random() * 1500;
+      const drift = (Math.random() - 0.5) * 200;
+      c.animate([
+        { transform: c.style.transform, top: '-20px', opacity: 1 },
+        { transform: `translateX(${drift}px) rotate(${720 + Math.random()*360}deg)`, top: '100vh', opacity: 0.8 }
+      ], { duration, easing: 'cubic-bezier(0.3, 0.7, 0.4, 1)' });
+
+      setTimeout(() => c.remove(), duration);
+    }
+  }
+
+  // 启动
+  initLearnArea();
+  setGender(voiceGender);
+  setAccent(voiceAccent);
+</script>
+
+</body>
+</html>

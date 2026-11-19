@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🪐 学习太阳系 Learn Solar System</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    user-select: none;
+    position: relative;
+  }
+
+  /* 星空背景 */
+  .stars-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* 顶部标题 */
+  header {
+    text-align: center;
+    padding: 28px 16px 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  h1 {
+    font-size: clamp(28px, 6vw, 44px);
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255,215,0,0.6), 3px 3px 0 rgba(0,0,0,0.3);
+    letter-spacing: 2px;
+    animation: bounce-title 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce-title {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+
+  .subtitle {
+    font-size: clamp(14px, 3.5vw, 20px);
+    color: #a5d8ff;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* 模式切换按钮 */
+  .mode-switch {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 16px 0 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .mode-btn {
+    padding: 12px 28px;
+    font-size: clamp(16px, 4vw, 20px);
+    font-weight: 800;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-radius: 50px;
+    background: rgba(255,255,255,0.1);
+    color: #a5d8ff;
+    cursor: pointer;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2);
+    transition: all 0.15s;
+    backdrop-filter: blur(10px);
+  }
+
+  .mode-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2);
+  }
+
+  .mode-btn.active {
+    background: linear-gradient(135deg, #ffd700, #ff9800);
+    color: #1a1a2e;
+    border-color: #ffd700;
+  }
+
+  /* 声音设置栏 */
+  .voice-settings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px 18px;
+    flex-wrap: wrap;
+    padding: 8px 16px 16px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .voice-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.15);
+    padding: 6px 8px;
+    border-radius: 50px;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .voice-group-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffd700;
+    padding-left: 6px;
+  }
+
+  .voice-toggle {
+    padding: 7px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .voice-toggle.active {
+    background: #fff;
+    color: #1a1a2e;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+
+  .voice-toggle:active {
+    transform: scale(0.94);
+  }
+
+  /* 太阳系网格 */
+  .planets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .planet-card {
+    background: rgba(255,255,255,0.12);
+    border-radius: 28px;
+    padding: 18px 12px 16px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.2), 0 12px 24px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 3px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    position: relative;
+  }
+
+  /* 太阳特别高亮 */
+  .planet-card.is-sun {
+    border-color: #ffd700;
+    box-shadow: 0 8px 0 #b8860b, 0 12px 30px rgba(255,215,0,0.4);
+  }
+
+  .planet-card:hover {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+
+  .planet-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.2), 0 6px 12px rgba(0,0,0,0.3);
+  }
+
+  .planet-emoji {
+    font-size: 56px;
+    line-height: 1;
+    margin: 0 auto 8px;
+    animation: planet-spin 4s linear infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+  }
+
+  @keyframes planet-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .planet-num {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .en-name {
+    font-size: clamp(19px, 4.5vw, 24px);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .cn-name {
+    font-size: clamp(14px, 3.5vw, 17px);
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .speaker-icon {
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  /* 弹出大字提示 */
+  .pop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(6px);
+  }
+
+  .pop-overlay.show {
+    display: flex;
+    animation: fade-in 0.2s;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .pop-card {
+    background: linear-gradient(160deg, #1a1a2e, #16213e);
+    border: 2px solid rgba(255,215,0,0.3);
+    border-radius: 40px;
+    padding: 40px 50px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,215,0,0.2);
+    animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 90vw;
+    position: relative;
+  }
+
+  .pop-speak-btn {
+    margin-top: 20px;
+    padding: 14px 36px;
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 900;
+    border: 4px solid #fff;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #ec407a, #d81b60);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #880e4f, 0 10px 20px rgba(0,0,0,0.15);
+    transition: all 0.12s;
+    letter-spacing: 1px;
+  }
+  .pop-speak-btn:hover { transform: translateY(-2px); }
+  .pop-speak-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #880e4f, 0 4px 8px rgba(0,0,0,0.15);
+  }
+  .pop-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    background: linear-gradient(135deg, #ef5350, #c62828);
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #8b0000, 0 6px 12px rgba(0,0,0,0.18);
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .pop-close-btn:hover { transform: translateY(-2px) rotate(90deg); }
+  .pop-close-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #8b0000, 0 3px 6px rgba(0,0,0,0.18);
+  }
+
+  @keyframes pop-in {
+    from { transform: scale(0.3); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .pop-emoji {
+    font-size: 120px;
+    line-height: 1;
+    margin: 0 auto 16px;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+    animation: planet-spin 6s linear infinite;
+  }
+
+  .pop-en {
+    font-size: clamp(36px, 10vw, 56px);
+    font-weight: 900;
+    color: #ffd700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  }
+
+  .pop-cn {
+    font-size: clamp(22px, 6vw, 32px);
+    color: #a5d8ff;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  .pop-fact {
+    font-size: clamp(18px, 5vw, 24px);
+    color: #fff;
+    margin-top: 14px;
+    font-weight: 800;
+    background: rgba(255,215,0,0.2);
+    display: inline-block;
+    padding: 8px 22px;
+    border-radius: 50px;
+    border: 2px solid rgba(255,215,0,0.5);
+  }
+
+  .pop-hint {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 18px;
+  }
+
+  /* 游戏模式 */
+  .game-area {
+    display: none;
+    padding: 30px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .game-area.show {
+    display: block;
+  }
+
+  .question-box {
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 30px;
+    padding: 28px 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.2), 0 12px 24px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .question-label {
+    font-size: clamp(16px, 4vw, 20px);
+    color: #ffd700;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-size: clamp(26px, 7vw, 40px);
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255,215,0,0.4);
+  }
+
+  .question-cn {
+    font-size: clamp(20px, 5vw, 28px);
+    color: #a5d8ff;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  .listen-btn {
+    margin-top: 14px;
+    padding: 10px 22px;
+    font-size: 16px;
+    font-weight: 700;
+    border: 3px solid #ffd700;
+    border-radius: 50px;
+    background: rgba(255,215,0,0.1);
+    color: #ffd700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .listen-btn:active {
+    transform: scale(0.95);
+  }
+
+  .game-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+  }
+
+  .option-card {
+    height: 120px;
+    border-radius: 24px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 8px 0 rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.2);
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 3px solid rgba(255,255,255,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    backdrop-filter: blur(10px);
+  }
+
+  .option-card .opt-emoji {
+    font-size: 44px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .option-card .opt-text {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .option-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .option-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
+  }
+
+  .option-card.correct {
+    animation: correct-pulse 0.6s;
+    border-color: #4caf50;
+  }
+
+  .option-card.wrong {
+    animation: wrong-shake 0.5s;
+    border-color: #f44336;
+  }
+
+  @keyframes correct-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  @keyframes wrong-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .score-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,215,0,0.15);
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-size: clamp(18px, 4.5vw, 24px);
+    font-weight: 800;
+    color: #ffd700;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+    border: 2px solid rgba(255,215,0,0.3);
+  }
+
+  /* 反馈文字 */
+  .feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: clamp(40px, 12vw, 80px);
+    font-weight: 900;
+    z-index: 200;
+    pointer-events: none;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  }
+
+  .feedback.show {
+    animation: feedback-pop 1.2s ease-out forwards;
+  }
+
+  @keyframes feedback-pop {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(-20deg); opacity: 0; }
+    30% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); opacity: 1; }
+    70% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); opacity: 0; }
+  }
+
+  /* 五彩纸屑 */
+  .confetti {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 150;
+  }
+
+  .footer-tip {
+    text-align: center;
+    padding: 20px;
+    color: rgba(255,255,255,0.5);
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 480px) {
+    .planets-grid { gap: 12px; padding: 14px; }
+    .planet-emoji { font-size: 48px; }
+    .pop-card { padding: 30px 28px; }
+    .pop-emoji { font-size: 90px; }
+    .option-card { height: 100px; }
+    .option-card .opt-emoji { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 星空背景 -->
+<div class="stars-bg" id="starsBg"></div>
+
+<header>
+  <h1>🪐 学习太阳系</h1>
+  <div class="subtitle">Learn Solar System · 点一点,听一听,玩一玩!</div>
+</header>
+
+<div class="mode-switch">
+  <button class="mode-btn active" id="learnModeBtn" onclick="switchMode('learn')">📖 学习</button>
+  <button class="mode-btn" id="gameModeBtn" onclick="switchMode('game')">🎮 游戏</button>
+</div>
+
+<div class="voice-settings">
+  <div class="voice-group">
+    <span class="voice-group-label">🗣️ 声音</span>
+    <button class="voice-toggle" id="voiceMaleBtn" onclick="setGender('male')">👨 男声</button>
+    <button class="voice-toggle active" id="voiceFemaleBtn" onclick="setGender('female')">👩 女声</button>
+  </div>
+  <div class="voice-group">
+    <span class="voice-group-label">🌍 口音</span>
+    <button class="voice-toggle active" id="accentUSBtn" onclick="setAccent('us')">🇺🇸 美式</button>
+    <button class="voice-toggle" id="accentUKBtn" onclick="setAccent('uk')">🇬🇧 英式</button>
+  </div>
+  <button class="voice-toggle" id="testVoiceBtn" style="background:#fff;color:#1a1a2e;box-shadow:0 2px 6px rgba(0,0,0,0.3);" onclick="testVoice()">🔊 试听</button>
+</div>
+
+<!-- 学习模式 -->
+<section class="planets-grid" id="learnArea"></section>
+
+<!-- 游戏模式 -->
+<section class="game-area" id="gameArea">
+  <div class="score-box">⭐ 得分: <span id="scoreNum">0</span></div>
+  <div class="question-box">
+    <div class="question-label">👉 找一找这个星球!</div>
+    <div class="question-text" id="questionText">Sun</div>
+    <div class="question-cn" id="questionCn">太阳</div>
+    <button class="listen-btn" onclick="speakCurrentQuestion()">🔊 再听一次</button>
+  </div>
+  <div class="game-options" id="gameOptions"></div>
+</section>
+
+<!-- 大字弹窗 -->
+<div class="pop-overlay" id="popOverlay" onclick="closePop()">
+  <div class="pop-card" onclick="event.stopPropagation()">
+    <button class="pop-close-btn" onclick="closePop()" aria-label="关闭">✕</button>
+    <div class="pop-emoji" id="popEmoji">☀️</div>
+    <div class="pop-en" id="popEn">Sun</div>
+    <div class="pop-cn" id="popCn">太阳</div>
+    <div class="pop-fact" id="popFact">Center of solar system · 太阳系中心</div>
+    <div><button class="pop-speak-btn" onclick="speakPop()">🔊 再听一次</button></div>
+    <div class="pop-hint">点击空白处关闭 · Tap to close</div>
+  </div>
+</div>
+
+<!-- 反馈文字 -->
+<div class="feedback" id="feedback"></div>
+
+<div class="footer-tip">💡 提示:点击星球可以听到英文发音和小知识哦!</div>
+
+<script>
+  // 太阳系数据:emoji + 英文 + 中文 + 小知识(天文特点)
+  const planets = [
+    { emoji: "☀️", en: "Sun",     cn: "太阳",   fact: "Center of solar system · 太阳系中心", isSun: true },
+    { emoji: "🌑", en: "Mercury", cn: "水星",   fact: "Closest to sun · 离太阳最近" },
+    { emoji: "💛", en: "Venus",   cn: "金星",   fact: "Bright planet · 最亮的行星" },
+    { emoji: "🌍", en: "Earth",   cn: "地球",   fact: "Our home · 我们的家" },
+    { emoji: "🔴", en: "Mars",    cn: "火星",   fact: "Red planet · 红色星球" },
+    { emoji: "🟠", en: "Jupiter", cn: "木星",   fact: "Biggest planet · 最大的行星" },
+    { emoji: "🪐", en: "Saturn",  cn: "土星",   fact: "Has rings · 有漂亮的光环" },
+    { emoji: "🔵", en: "Uranus",  cn: "天王星", fact: "Spins on side · 侧着身子转" },
+    { emoji: "💙", en: "Neptune", cn: "海王星", fact: "Windy planet · 多风的行星" },
+    { emoji: "🌙", en: "Moon",    cn: "月亮",   fact: "Earth's friend · 地球的好朋友" }
+  ];
+
+  let score = 0;
+  let currentShowItem = null;
+  let currentAnswer = null;
+
+  // 生成星空背景
+  function createStars() {
+    const bg = document.getElementById('starsBg');
+    let html = '';
+    for (let i = 0; i < 80; i++) {
+      const size = Math.random() * 2.5 + 1;
+      const left = Math.random() * 100;
+      const top = Math.random() * 100;
+      const delay = Math.random() * 3;
+      html += `<div class="star" style="width:${size}px;height:${size}px;left:${left}vw;top:${top}vh;animation-delay:${delay}s;"></div>`;
+    }
+    bg.innerHTML = html;
+  }
+
+  // 初始化学习区
+  function initLearnArea() {
+    const area = document.getElementById('learnArea');
+    area.innerHTML = planets.map((p, i) => `
+      <div class="planet-card${p.isSun ? ' is-sun' : ''}" onclick="showPlanet(${i})">
+        <div class="planet-emoji">${p.emoji}</div>
+        <div class="planet-num">${p.isSun ? '⭐ 恒星' : '第 ' + i + ' 颗'}</div>
+        <div class="en-name">${p.en}<span class="speaker-icon">🔊</span></div>
+        <div class="cn-name">${p.cn}</div>
+      </div>
+    `).join('');
+  }
+
+  // 点击星球卡片
+  function showPlanet(i) {
+    const p = planets[i];
+    currentShowItem = p;
+    document.getElementById('popEmoji').textContent = p.emoji;
+    document.getElementById('popEn').textContent = p.en;
+    document.getElementById('popCn').textContent = p.cn;
+    document.getElementById('popFact').textContent = "💡 " + p.fact;
+    document.getElementById('popOverlay').classList.add('show');
+    speak(p.en);
+  }
+
+  function closePop() {
+    document.getElementById('popOverlay').classList.remove('show');
+  }
+
+  function speakPop(){ if(currentShowItem) speak(currentShowItem.en); }
+
+  // ===== 声音设置 =====
+  // 当前选择(默认:女声 + 美式),用独立 key 避免与其他学习页冲突
+  let voiceGender = localStorage.getItem('vss_gender') || 'female';
+  let voiceAccent = localStorage.getItem('vss_accent') || 'us';
+  let cachedVoices = [];
+
+  // 已知男声名字(跨 macOS/Windows/Linux)
+  const MALE_NAMES = [
+    'alex','fred','tom','ralph','aaron','luca','markus','gordon','james',
+    'daniel','oliver','arthur','george','ryan','guy','reed','rocko',
+    'david','mark','eric','benjamin','jacob','liam','noah'
+  ];
+  // 已知女声名字
+  const FEMALE_NAMES = [
+    'samantha','victoria','karen','moira','tessa','zoe','fiona','veena',
+    'kate','serena','hannah','amy','emma','joanna','kendra','kimberly','salli',
+    'hazel','sonia','libby','aria','jenny','michelle','linda','heather',
+    'susan','lisa','zira','nancy','amber'
+  ];
+
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    cachedVoices = window.speechSynthesis.getVoices();
+  }
+
+  // 根据口音+性别挑选语音
+  function pickVoice(accent, gender) {
+    const voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+    const langPrefix = accent === 'uk' ? 'en-GB' : 'en-US';
+    let langVoices = voices.filter(v => v.lang === langPrefix);
+    if (langVoices.length === 0) langVoices = voices.filter(v => v.lang.toLowerCase().startsWith(langPrefix.toLowerCase()));
+    if (langVoices.length === 0) langVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
+    if (langVoices.length === 0) return null;
+
+    const preferred = gender === 'male' ? MALE_NAMES : FEMALE_NAMES;
+    // 1) 按名字匹配
+    for (const name of preferred) {
+      const match = langVoices.find(v => v.name.toLowerCase().includes(name));
+      if (match) return match;
+    }
+    // 2) 名字中带性别提示词
+    const genderHint = gender === 'male' ? /(male|man|\bm\b)/ : /(female|woman|\bf\b)/;
+    const hinted = langVoices.find(v => genderHint.test(v.name.toLowerCase()));
+    if (hinted) return hinted;
+
+    // 3) 兜底:多个语音按名字排序错开取,保证男女有区别
+    if (langVoices.length === 1) return langVoices[0];
+    const sorted = [...langVoices].sort((a,b) => a.name.localeCompare(b.name));
+    return gender === 'male' ? sorted[0] : sorted[sorted.length - 1];
+  }
+
+  // 英文发音
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const voice = pickVoice(voiceAccent, voiceGender);
+    if (voice) {
+      u.voice = voice;
+      u.lang = voice.lang;
+    } else {
+      u.lang = voiceAccent === 'uk' ? 'en-GB' : 'en-US';
+    }
+    u.rate = 0.8;
+    u.pitch = voiceGender === 'male' ? 0.9 : 1.15;
+    window.speechSynthesis.speak(u);
+  }
+
+  function setGender(g) {
+    voiceGender = g;
+    localStorage.setItem('vss_gender', g);
+    document.getElementById('voiceMaleBtn').classList.toggle('active', g === 'male');
+    document.getElementById('voiceFemaleBtn').classList.toggle('active', g === 'female');
+  }
+
+  function setAccent(a) {
+    voiceAccent = a;
+    localStorage.setItem('vss_accent', a);
+    document.getElementById('accentUSBtn').classList.toggle('active', a === 'us');
+    document.getElementById('accentUKBtn').classList.toggle('active', a === 'uk');
+  }
+
+  function testVoice() {
+    speak("Hello! Let's explore the solar system!");
+  }
+
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  // 切换模式
+  function switchMode(mode) {
+    const learnBtn = document.getElementById('learnModeBtn');
+    const gameBtn = document.getElementById('gameModeBtn');
+    const learnArea = document.getElementById('learnArea');
+    const gameArea = document.getElementById('gameArea');
+    if (mode === 'learn') {
+      learnBtn.classList.add('active');
+      gameBtn.classList.remove('active');
+      learnArea.style.display = 'grid';
+      gameArea.classList.remove('show');
+    } else {
+      gameBtn.classList.add('active');
+      learnBtn.classList.remove('active');
+      learnArea.style.display = 'none';
+      gameArea.classList.add('show');
+      newQuestion();
+    }
+  }
+
+  // 生成新题目
+  function newQuestion() {
+    const shuffled = [...planets].sort(() => Math.random() - 0.5);
+    const options = shuffled.slice(0, 4);
+    currentAnswer = options[Math.floor(Math.random() * options.length)];
+
+    document.getElementById('questionText').textContent = currentAnswer.en;
+    document.getElementById('questionCn').textContent = currentAnswer.cn;
+
+    const optArea = document.getElementById('gameOptions');
+    optArea.innerHTML = options.map(p => `
+      <div class="option-card" onclick="checkAnswer('${p.en}', this)">
+        <div class="opt-emoji">${p.emoji}</div>
+        <div class="opt-text">${p.en}</div>
+      </div>
+    `).join('');
+
+    setTimeout(() => speak(currentAnswer.en), 300);
+  }
+
+  function speakCurrentQuestion() {
+    if (currentAnswer) speak(currentAnswer.en);
+  }
+
+  // 检查答案
+  function checkAnswer(answer, el) {
+    if (answer === currentAnswer.en) {
+      el.classList.add('correct');
+      score++;
+      document.getElementById('scoreNum').textContent = score;
+      showFeedback("✅ 真棒!", "#ffd700");
+      launchConfetti();
+      speak(currentAnswer.en);
+      setTimeout(() => { newQuestion(); }, 1500);
+    } else {
+      el.classList.add('wrong');
+      showFeedback("😢 再试试!", "#f44336");
+      setTimeout(() => el.classList.remove('wrong'), 600);
+    }
+  }
+
+  function showFeedback(text, color) {
+    const fb = document.getElementById('feedback');
+    fb.textContent = text;
+    fb.style.color = color;
+    fb.classList.remove('show');
+    void fb.offsetWidth;
+    fb.classList.add('show');
+  }
+
+  // 五彩纸屑
+  function launchConfetti() {
+    const colorsList = ['#ffd700','#ff9800','#a5d8ff','#ec407a','#26a69a','#7e57c2'];
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.background = colorsList[Math.floor(Math.random() * colorsList.length)];
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.top = '-20px';
+      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      c.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(c);
+
+      const duration = 1500 + Math.random() * 1500;
+      const drift = (Math.random() - 0.5) * 200;
+      c.animate([
+        { transform: c.style.transform, top: '-20px', opacity: 1 },
+        { transform: `translateX(${drift}px) rotate(${720 + Math.random()*360}deg)`, top: '100vh', opacity: 0.8 }
+      ], { duration, easing: 'cubic-bezier(0.3, 0.7, 0.4, 1)' });
+
+      setTimeout(() => c.remove(), duration);
+    }
+  }
+
+  // 启动
+  createStars();
+  initLearnArea();
+  setGender(voiceGender);
+  setAccent(voiceAccent);
+</script>
+
+</body>
+</html>

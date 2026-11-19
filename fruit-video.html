@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>水果英语 · 动画视频</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    user-select: none;
+  }
+
+  /* ===== 场景容器 ===== */
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .scene.active { opacity: 1; }
+
+  /* ===== 进度条 ===== */
+  .progress-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 8px;
+    width: 0%;
+    background: linear-gradient(90deg, #ff6f00, #ffca28, #66bb6a);
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+
+  /* ===== 场景 1：开场 ===== */
+  #scene1 {
+    background: linear-gradient(180deg, #4fc3f7 0%, #81d4fa 40%, #b3e5fc 70%, #e1f5fe 100%);
+  }
+  .sun {
+    position: absolute; top: 8%; right: 12%;
+    width: 100px; height: 100px;
+    animation: sun-glow 3s ease-in-out infinite;
+  }
+  @keyframes sun-glow {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,235,59,0.6)); }
+    50% { transform: scale(1.08); filter: drop-shadow(0 0 35px rgba(255,235,59,0.9)); }
+  }
+  .sun-rays {
+    position: absolute; top: 8%; right: 12%;
+    width: 100px; height: 100px;
+    animation: rays-rotate 8s linear infinite;
+  }
+  @keyframes rays-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .cloud {
+    position: absolute;
+    animation: drift linear infinite;
+  }
+  .cloud-1 { top: 15%; animation-duration: 18s; }
+  .cloud-2 { top: 28%; animation-duration: 25s; animation-delay: 3s; transform: scale(0.7); }
+  .cloud-3 { top: 42%; animation-duration: 30s; animation-delay: 8s; transform: scale(1.3); }
+  @keyframes drift { from { left: -200px; } to { left: 110%; } }
+  .grass-strip {
+    position: absolute; bottom: 0; width: 100%; height: 100px;
+    background: linear-gradient(180deg, #66bb6a 0%, #43a047 50%, #2e7d32 100%);
+    border-radius: 50% 50% 0 0 / 30px 30px 0 0;
+  }
+  .title-container {
+    position: relative;
+    text-align: center;
+    z-index: 10;
+  }
+  .title-main {
+    font-size: clamp(40px, 8vw, 80px);
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 4px 4px 0 #ff6f00, 8px 8px 0 rgba(0,0,0,0.15);
+    letter-spacing: 4px;
+    opacity: 0;
+    animation: title-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+  }
+  @keyframes title-pop {
+    0% { opacity: 0; transform: scale(0.3) translateY(40px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .title-sub {
+    font-size: clamp(20px, 4vw, 36px);
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    margin-top: 16px;
+    opacity: 0;
+    animation: sub-fade 0.6s ease-out 1.1s forwards;
+  }
+  @keyframes sub-fade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== 场景 2/3：水果展示 ===== */
+  #scene2, #scene3 {
+    background: linear-gradient(180deg, #fff3e0 0%, #ffe0b2 50%, #ffcc80 100%);
+  }
+  .fruit-stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+  }
+  .fruit-emoji-big {
+    font-size: clamp(120px, 30vw, 240px);
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2));
+    opacity: 0;
+  }
+  .scene.active .fruit-emoji-big {
+    animation: fruit-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+  }
+  @keyframes fruit-drop {
+    0% { opacity: 0; transform: translateY(-80px) scale(0.5) rotate(-20deg); }
+    60% { opacity: 1; transform: translateY(10px) scale(1.1) rotate(5deg); }
+    100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+  }
+  .scene.active .fruit-emoji-big {
+    animation: fruit-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards, fruit-bounce 1.5s ease-in-out 1s infinite;
+  }
+  @keyframes fruit-bounce {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0); }
+    50% { transform: translateY(-15px) scale(1.05) rotate(2deg); }
+  }
+
+  .fruit-en-name {
+    font-size: clamp(48px, 10vw, 96px);
+    font-weight: 900;
+    margin-top: 20px;
+    opacity: 0;
+  }
+  #scene2 .fruit-en-name { color: #c62828; text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(0,0,0,0.1); }
+  #scene3 .fruit-en-name { color: #f9a825; text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(0,0,0,0.1); }
+  .scene.active .fruit-en-name {
+    animation: name-slide 0.6s ease-out 0.8s forwards;
+  }
+  @keyframes name-slide {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .fruit-cn-name {
+    font-size: clamp(32px, 7vw, 64px);
+    font-weight: 700;
+    color: #5d4037;
+    margin-top: 10px;
+    opacity: 0;
+  }
+  .scene.active .fruit-cn-name {
+    animation: cn-slide 0.6s ease-out 1.2s forwards;
+  }
+  @keyframes cn-slide {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .letter-line {
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 800;
+    margin-top: 20px;
+    opacity: 0;
+  }
+  #scene2 .letter-line { color: #c62828; }
+  #scene3 .letter-line { color: #f9a825; }
+  .scene.active .letter-line {
+    animation: letter-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1.6s forwards;
+  }
+  @keyframes letter-pop {
+    0% { opacity: 0; transform: scale(0); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .letter-highlight {
+    display: inline-block;
+    font-size: 1.3em;
+    text-shadow: 2px 2px 0 #fff;
+    animation: letter-pulse 0.8s ease-in-out infinite;
+  }
+  @keyframes letter-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+
+  /* ===== 场景 2 专属：字母 A 教学 ===== */
+  /* 大字母 Aa */
+  .big-letter {
+    font-size: clamp(80px, 18vw, 180px);
+    font-weight: 900;
+    color: #e53935;
+    text-shadow: 4px 4px 0 #fff, 8px 8px 0 rgba(0,0,0,0.12);
+    opacity: 0;
+    line-height: 1;
+  }
+  #scene2.active .big-letter {
+    animation: big-letter-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards,
+               big-letter-pulse 1.2s ease-in-out 1s infinite;
+  }
+  @keyframes big-letter-drop {
+    0% { opacity: 0; transform: translateY(-60px) scale(0.3) rotate(-15deg); }
+    60% { opacity: 1; transform: translateY(8px) scale(1.1) rotate(3deg); }
+    100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+  }
+  @keyframes big-letter-pulse {
+    0%, 100% { transform: scale(1) rotate(0); }
+    50% { transform: scale(1.08) rotate(-1deg); }
+  }
+
+  /* Apple 单词中首字母高亮 */
+  .first-letter {
+    color: #e53935;
+    text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(229,57,53,0.2);
+    animation: first-letter-glow 0.8s ease-in-out infinite;
+  }
+  @keyframes first-letter-glow {
+    0%, 100% { transform: scale(1); text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(229,57,53,0.2); }
+    50% { transform: scale(1.15); text-shadow: 3px 3px 0 #fff, 0 0 20px rgba(229,57,53,0.6); }
+  }
+
+  /* 场景 2 动画时序覆盖（因为多了大字母，整体节奏放慢） */
+  #scene2.active .fruit-emoji-big {
+    animation: fruit-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s forwards,
+               fruit-bounce 1.5s ease-in-out 2.3s infinite;
+  }
+  #scene2.active .fruit-en-name {
+    animation: name-slide 0.6s ease-out 3s forwards;
+  }
+  #scene2.active .fruit-cn-name {
+    animation: cn-slide 0.6s ease-out 4s forwards;
+  }
+  #scene2.active .letter-line {
+    animation: letter-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 5s forwards;
+  }
+
+  /* ===== 场景 3 专属：字母 B 教学（金色） ===== */
+  .big-letter-b {
+    color: #f9a825;
+    text-shadow: 4px 4px 0 #fff, 8px 8px 0 rgba(0,0,0,0.12);
+  }
+  .first-letter-b {
+    color: #f9a825;
+    text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(249,168,37,0.2);
+    animation: first-letter-glow-b 0.8s ease-in-out infinite;
+  }
+  @keyframes first-letter-glow-b {
+    0%, 100% { transform: scale(1); text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(249,168,37,0.2); }
+    50% { transform: scale(1.15); text-shadow: 3px 3px 0 #fff, 0 0 20px rgba(249,168,37,0.6); }
+  }
+
+  /* 场景 3 动画时序覆盖（与场景 2 一致） */
+  #scene3.active .big-letter {
+    animation: big-letter-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards,
+               big-letter-pulse 1.2s ease-in-out 1s infinite;
+  }
+  #scene3.active .fruit-emoji-big {
+    animation: fruit-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s forwards,
+               fruit-bounce 1.5s ease-in-out 2.3s infinite;
+  }
+  #scene3.active .fruit-en-name {
+    animation: name-slide 0.6s ease-out 3s forwards;
+  }
+  #scene3.active .fruit-cn-name {
+    animation: cn-slide 0.6s ease-out 4s forwards;
+  }
+  #scene3.active .letter-line {
+    animation: letter-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 5s forwards;
+  }
+
+  /* 装饰星星 */
+  .deco-star {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0.6;
+    animation: star-twinkle 1.5s ease-in-out infinite;
+  }
+  @keyframes star-twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 0.8; transform: scale(1.2); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 场景 1：开场 ===== -->
+<div class="scene" id="scene1">
+  <!-- 太阳光线 -->
+  <svg class="sun-rays" viewBox="0 0 100 100">
+    <g stroke="#fff59d" stroke-width="3" stroke-linecap="round" opacity="0.7">
+      <line x1="50" y1="5" x2="50" y2="15"/>
+      <line x1="50" y1="85" x2="50" y2="95"/>
+      <line x1="5" y1="50" x2="15" y2="50"/>
+      <line x1="85" y1="50" x2="95" y2="50"/>
+      <line x1="18" y1="18" x2="25" y2="25"/>
+      <line x1="75" y1="75" x2="82" y2="82"/>
+      <line x1="82" y1="18" x2="75" y2="25"/>
+      <line x1="25" y1="75" x2="18" y2="82"/>
+    </g>
+  </svg>
+  <!-- 太阳 -->
+  <svg class="sun" viewBox="0 0 100 100">
+    <defs>
+      <radialGradient id="sunGrad">
+        <stop offset="0%" stop-color="#fff9c4"/>
+        <stop offset="60%" stop-color="#ffeb3b"/>
+        <stop offset="100%" stop-color="#ffa726"/>
+      </radialGradient>
+    </defs>
+    <circle cx="50" cy="50" r="30" fill="url(#sunGrad)"/>
+  </svg>
+  <!-- 云朵 -->
+  <svg class="cloud cloud-1" width="140" height="70" viewBox="0 0 140 70" style="left:-200px;">
+    <ellipse cx="35" cy="45" rx="25" ry="20" fill="#fff" opacity="0.95"/>
+    <ellipse cx="65" cy="35" rx="30" ry="25" fill="#fff" opacity="0.95"/>
+    <ellipse cx="100" cy="45" rx="22" ry="18" fill="#fff" opacity="0.95"/>
+  </svg>
+  <svg class="cloud cloud-2" width="100" height="50" viewBox="0 0 100 50" style="left:-200px;">
+    <ellipse cx="25" cy="32" rx="18" ry="15" fill="#fff" opacity="0.9"/>
+    <ellipse cx="50" cy="25" rx="22" ry="18" fill="#fff" opacity="0.9"/>
+    <ellipse cx="75" cy="32" rx="16" ry="13" fill="#fff" opacity="0.9"/>
+  </svg>
+  <svg class="cloud cloud-3" width="180" height="90" viewBox="0 0 180 90" style="left:-200px;">
+    <ellipse cx="40" cy="55" rx="30" ry="24" fill="#fff" opacity="0.92"/>
+    <ellipse cx="85" cy="42" rx="36" ry="30" fill="#fff" opacity="0.92"/>
+    <ellipse cx="135" cy="55" rx="28" ry="22" fill="#fff" opacity="0.92"/>
+  </svg>
+  <!-- 草地 -->
+  <div class="grass-strip"></div>
+  <!-- 标题 -->
+  <div class="title-container">
+    <div class="title-main">嗨，小朋友们！</div>
+    <div class="title-sub">今天我们来学水果 🍎🍌 Let's learn fruits today!</div>
+  </div>
+</div>
+
+<!-- ===== 场景 2：字母 A 与苹果 ===== -->
+<div class="scene" id="scene2">
+  <div class="deco-star" style="top:10%;left:10%;">⭐</div>
+  <div class="deco-star" style="top:15%;right:12%;animation-delay:0.3s;">✨</div>
+  <div class="deco-star" style="bottom:15%;left:8%;animation-delay:0.6s;">⭐</div>
+  <div class="deco-star" style="bottom:20%;right:10%;animation-delay:0.4s;">✨</div>
+  <div class="fruit-stage">
+    <!-- ① 大字母 Aa -->
+    <div class="big-letter">Aa</div>
+    <!-- ② 苹果 emoji -->
+    <div class="fruit-emoji-big">🍎</div>
+    <!-- ③ Apple 单词，首字母高亮 -->
+    <div class="fruit-en-name"><span class="first-letter">A</span>pple</div>
+    <div class="fruit-cn-name">苹果</div>
+    <div class="letter-line"><span class="letter-highlight">A</span> for Apple</div>
+  </div>
+</div>
+
+<!-- ===== 场景 3：字母 B 与香蕉 ===== -->
+<div class="scene" id="scene3">
+  <div class="deco-star" style="top:10%;left:10%;">⭐</div>
+  <div class="deco-star" style="top:15%;right:12%;animation-delay:0.3s;">✨</div>
+  <div class="deco-star" style="bottom:15%;left:8%;animation-delay:0.6s;">⭐</div>
+  <div class="deco-star" style="bottom:20%;right:10%;animation-delay:0.4s;">✨</div>
+  <div class="fruit-stage">
+    <!-- ① 大字母 Bb -->
+    <div class="big-letter big-letter-b">Bb</div>
+    <!-- ② 香蕉 emoji -->
+    <div class="fruit-emoji-big">🍌</div>
+    <!-- ③ Banana 单词，首字母高亮 -->
+    <div class="fruit-en-name"><span class="first-letter first-letter-b">B</span>anana</div>
+    <div class="fruit-cn-name">香蕉</div>
+    <div class="letter-line"><span class="letter-highlight">B</span> for Banana</div>
+  </div>
+</div>
+
+<!-- 进度条 -->
+<div class="progress-bar" id="progressBar"></div>
+
+<script>
+  // ===== 场景时间轴配置 =====
+  const scenes = [
+    { id: 'scene1', duration: 7000, narration: "嗨，小朋友们！今天我们来学水果，Let's learn fruits today", lang: 'zh-CN', rate: 0.85, pitch: 1.15, gender: null },
+    { id: 'scene2', duration: 9000, narration: "This is the letter A. || Apple starts with A.", lang: 'en-US', rate: 0.75, pitch: 1.2, gender: 'female' },
+    { id: 'scene3', duration: 9000, narration: "This is the letter B. || Banana starts with B.", lang: 'en-US', rate: 0.75, pitch: 1.2, gender: 'female' },
+  ];
+
+  let currentSceneIdx = 0;
+  let totalElapsed = 0;
+  const totalDuration = scenes.reduce((sum, s) => sum + s.duration, 0);
+
+  // 女声名称列表（用于匹配系统语音）
+  const FEMALE_NAMES = ['samantha','victoria','karen','moira','tessa','zoe','fiona','veena','kate','serena','hannah','amy','emma','joanna','kendra','kimberly','salli','hazel','sonia','libby','aria','jenny','michelle','linda','heather','susan','lisa','zira','nancy','amber'];
+
+  function speak(text, lang, rate, pitch, gender) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+
+    // 匹配女声的辅助函数
+    function pickFemaleVoice(lang) {
+      const voices = window.speechSynthesis.getVoices();
+      const langVoices = voices.filter(v => v.lang === lang || v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+      const pool = langVoices.length > 0 ? langVoices : voices.filter(v => v.lang.toLowerCase().startsWith('en'));
+      for (const name of FEMALE_NAMES) {
+        const match = pool.find(v => v.name.toLowerCase().includes(name));
+        if (match) return match;
+      }
+      return null;
+    }
+
+    // 支持 || 作为停顿标记，分段播放
+    if (text.includes('||')) {
+      const parts = text.split('||').map(s => s.trim()).filter(s => s.length > 0);
+      const femaleVoice = gender === 'female' ? pickFemaleVoice(lang) : null;
+
+      function speakPart(idx) {
+        if (idx >= parts.length) return;
+        const u = new SpeechSynthesisUtterance(parts[idx]);
+        u.lang = lang;
+        u.rate = rate;
+        u.pitch = pitch;
+        if (femaleVoice) { u.voice = femaleVoice; u.lang = femaleVoice.lang; }
+        u.onend = () => {
+          if (idx + 1 < parts.length) {
+            // 停顿 2 秒后播放下一段
+            setTimeout(() => speakPart(idx + 1), 2000);
+          }
+        };
+        speechSynthesis.speak(u);
+      }
+      speakPart(0);
+      return;
+    }
+
+    // 无停顿的普通播放
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = rate;
+    u.pitch = pitch;
+
+    if (gender) {
+      const voice = pickFemaleVoice(lang);
+      if (voice) { u.voice = voice; u.lang = voice.lang; }
+    }
+
+    speechSynthesis.speak(u);
+  }
+
+  function playScene(idx) {
+    if (idx >= scenes.length) {
+      // 全部播完，重置
+      document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+      currentSceneIdx = 0;
+      totalElapsed = 0;
+      document.getElementById('progressBar').style.width = '0%';
+      return;
+    }
+
+    const scene = scenes[idx];
+    // 切换场景
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    // 小延迟确保动画重新触发
+    setTimeout(() => {
+      document.getElementById(scene.id).classList.add('active');
+      // 播放旁白
+      speak(scene.narration, scene.lang, scene.rate, scene.pitch, scene.gender);
+    }, 50);
+
+    // 定时进入下一个场景
+    setTimeout(() => {
+      totalElapsed += scene.duration;
+      document.getElementById('progressBar').style.width = (totalElapsed / totalDuration * 100) + '%';
+      currentSceneIdx++;
+      playScene(currentSceneIdx);
+    }, scene.duration);
+  }
+
+  // 进度条实时更新
+  function updateProgress() {
+    if (currentSceneIdx < scenes.length) {
+      const scene = scenes[currentSceneIdx];
+      const sceneStart = scenes.slice(0, currentSceneIdx).reduce((sum, s) => sum + s.duration, 0);
+      const now = Date.now() - sceneStartTime;
+      const current = sceneStart + Math.min(now, scene.duration);
+      document.getElementById('progressBar').style.width = (current / totalDuration * 100) + '%';
+    }
+    requestAnimationFrame(updateProgress);
+  }
+
+  let sceneStartTime = Date.now();
+
+  // 页面加载后开始播放
+  window.addEventListener('load', () => {
+    sceneStartTime = Date.now();
+    playScene(0);
+    updateProgress();
+  });
+
+  // 点击重播
+  document.body.addEventListener('click', () => {
+    speechSynthesis.cancel();
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    currentSceneIdx = 0;
+    totalElapsed = 0;
+    sceneStartTime = Date.now();
+    document.getElementById('progressBar').style.width = '0%';
+    setTimeout(() => playScene(0), 100);
+  });
+</script>
+
+</body>
+</html>
